@@ -1,5 +1,11 @@
-import Image from 'next/image'
+import PromoBanner from '@/components/PromoBanner'
+import ProductCard from '@/components/products/ProductCard'
 
 export default function Home() {
-  return <main className="">E-Shop</main>
+  return (
+    <section className="">
+      <PromoBanner />
+      <ProductCard />
+    </section>
+  )
 }

@@ -6,7 +6,8 @@ import { ThemeProvider } from './providers/theme-provider'
 import { Toaster } from '@/components/ui/toaster'
 import localFont from 'next/font/local'
 import ReactQueryProvider from './providers/ReactQueryProvider'
-import Navbar from '@/components/Navbar'
+import Navbar from '@/components/nav/Navbar'
+import Footer from '@/components/footer/Footer'
 
 const inter = Inter({ subsets: ['latin'] })
 const primaryFont = localFont({
@@ -36,13 +37,18 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fa-IR" dir="rtl">
-      <body className={`${primaryFont.variable} font-farsi adad  antialiased`}>
+      <body
+        className={`${primaryFont.variable} font-farsi adad  antialiased text-slate-700 dark:text-slate-100 `}
+      >
         <ReduxProviders>
           <ReactQueryProvider>
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
               <Toaster />
-              <Navbar />
-              {children}
+              <div className="flex flex-col min-h-screen">
+                <Navbar />
+                <main className="flex-grow">{children}</main>
+                <Footer />
+              </div>
             </ThemeProvider>
           </ReactQueryProvider>
         </ReduxProviders>
