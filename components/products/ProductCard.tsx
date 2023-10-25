@@ -1,4 +1,8 @@
+import { formatPrice } from '@/lib/utils'
 import { StarIcon } from '@heroicons/react/20/solid'
+import Image from 'next/image'
+import Link from 'next/link'
+import { Rating } from '@mui/material'
 
 const products = [
   {
@@ -16,7 +20,7 @@ const products = [
     id: 2,
     name: 'Organize Pen Holder',
     price: '15000',
-    rating: 5,
+    rating: 4.5,
     reviewCount: 18,
     imageSrc:
       'https://tailwindui.com/img/ecommerce-images/category-page-05-image-card-02.jpg',
@@ -36,7 +40,7 @@ const products = [
   },
   {
     id: 4,
-    name: 'Organize Phone Holder',
+    name: 'Organize Phone Holder ',
     price: '15000',
     rating: 4,
     reviewCount: 21,
@@ -65,23 +69,28 @@ export default function ProductCard() {
               className="group relative border-b border-r border-gray-200 p-4 sm:p-6"
             >
               <div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-gray-200 group-hover:opacity-75">
-                <img
+                <Image
+                  fill
                   src={product.imageSrc}
                   alt={product.imageAlt}
                   className="h-full w-full object-cover object-center"
                 />
               </div>
               <div className="pb-4 pt-10 text-center">
-                <h3 className="text-sm font-medium text-gray-900">
-                  <a href={product.href}>
-                    <span aria-hidden="true" className="absolute inset-0" />
+                <h3 className="text-sm font-medium text-gray-900 truncate ">
+                  <Link href={`/product/${product.id}`}>
+                    <span aria-hidden="true" className="absolute inset-0  " />
                     {product.name}
-                  </a>
+                  </Link>
                 </h3>
                 <div className="mt-3 flex flex-col items-center">
                   <p className="sr-only">{product.rating} out of 5 stars</p>
                   <div dir="ltr" className="flex items-center">
-                    {[0, 1, 2, 3, 4].map((rating) => (
+                    <p dir="rtl" className="mt-1 pr-1 text-xs text-gray-500">
+                      {/* {product.reviews.length} نظر */}
+                      {`(${product.reviewCount} نظر)`}
+                    </p>
+                    {/* {[0, 1, 2, 3, 4].map((rating) => (
                       <StarIcon
                         key={rating}
                         className={classNames(
@@ -92,14 +101,33 @@ export default function ProductCard() {
                         )}
                         aria-hidden="true"
                       />
-                    ))}
+                    ))} */}
+                    {/* MUI Rating  */}
+                    <Rating
+                      value={product.rating}
+                      // value={productRating(product)}
+                      readOnly
+                      precision={0.5}
+                      defaultValue={5}
+                      icon={
+                        <StarIcon
+                          fontSize="inherit"
+                          className={classNames(
+                            'text-yellow-400 h-5 w-5 flex-shrink-0'
+                          )}
+                        />
+                      }
+                      emptyIcon={
+                        <StarIcon
+                          fontSize="inherit"
+                          className="text-gray-200 h-5 w-5 flex-shrink-0"
+                        />
+                      }
+                    />
                   </div>
-                  <p className="mt-1 text-sm text-gray-500">
-                    {product.reviewCount} نظر
-                  </p>
                 </div>
                 <p className="mt-4 text-base font-medium text-gray-900">
-                  {product.price}
+                  {formatPrice.format(+product.price)} تومان
                 </p>
               </div>
             </div>
