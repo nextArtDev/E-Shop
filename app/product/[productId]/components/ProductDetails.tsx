@@ -1,5 +1,5 @@
 'use client'
-import { Fragment, useState } from 'react'
+import { Fragment, useCallback, useState } from 'react'
 import { StarIcon } from '@heroicons/react/20/solid'
 import { RadioGroup, Tab } from '@headlessui/react'
 import {
@@ -10,6 +10,10 @@ import { Rating } from '@mui/material'
 import Link from 'next/link'
 import { Separator } from '@/components/ui/separator'
 import { formatPrice } from '@/lib/utils'
+import { CardProductType, SelectedImgType } from '@/types/product'
+import SetColor from '@/app/product/[productId]/components/SetColor'
+import SetQuantity from './SetQuantity'
+import ProductImage from './ProductImage'
 
 const product = {
   name: 'Basic Tee',
@@ -137,6 +141,41 @@ export default function ProductDetails() {
   const [selectedColor, setSelectedColor] = useState(product.colors[0])
   const [selectedSize, setSelectedSize] = useState(product.sizes[2])
 
+  // from course
+  // const [cardProduct, setCardProduct] = useState<CardProductType>({
+  //   id: product.id,
+  //   name: product.name,
+  //   description: product.description,
+  //   category: product.category,
+  //   brand: product.brand,
+  //   selectedImg: { ...product.images[0] },
+  //   quantity: 1,
+  //   price: product.price,
+  // })
+
+  // const handleColorSelect = useCallback(
+  //   (value: SelectedImgType) => {
+  //     setCardProduct((prev) => {
+  //       return { ...prev, selectedImg: value }
+  //     })
+  //   },
+  //   [cardProduct.selectedImg]
+  // )
+
+  // const handleQtyDecrease = useCallback(() => {
+  //   if (cardProduct.quantity === 1) return
+  //   setCardProduct((prev) => {
+  //     return { ...prev, quantity: ++prev.quantity }
+  //   })
+  // }, [cardProduct])
+  // const handleQtyIncrease = useCallback(() => {
+  //   setCardProduct((prev) => {
+  //     return { ...prev, quantity: --prev.quantity }
+  //   })
+  // }, [cardProduct])
+
+  // const handleColorSelect = useCallback(() => {}, [])
+
   return (
     <div className="bg-white">
       <div className="pb-16 pt-2 sm:pb-24">
@@ -250,7 +289,12 @@ export default function ProductDetails() {
               </div>
             </div>
             <Separator className="my-2" />
-
+            {/* custom image gallery  */}
+            {/* <ProductImage
+              cardProduct={cardProduct}
+              product={product}
+              handleColorSelect={handleColorSelect}
+            /> */}
             <Tab.Group as="div" className="py-8 flex flex-col-reverse">
               {/* Image selector */}
               <div className="mx-auto mt-6  w-full max-w-2xl sm:block lg:max-w-none">
@@ -289,7 +333,7 @@ export default function ProductDetails() {
                   <Tab.Panel key={image.id}>
                     <img
                       src={image.imageSrc}
-                      alt={image.alt}
+                      // alt={image.alt}
                       className="h-full w-full object-cover object-center sm:rounded-lg"
                     />
                   </Tab.Panel>
@@ -335,12 +379,24 @@ export default function ProductDetails() {
                               'h-8 w-8 rounded-full border border-black border-opacity-10'
                             )}
                           />
+                          {/* {
+                            <SetColor
+                              cardProduct={cardProduct}
+                              images={product.images}
+                              handleColorSelect={handleColorSelect}
+                            />
+                          } */}
                         </RadioGroup.Option>
                       ))}
                     </div>
                   </RadioGroup>
                 </div>
-
+                {/* <SetQuantity
+                  // cardProduct={}
+                  // cardCounter={}
+                  handleQtyDecrease={handleQtyDecrease}
+                  handleQtyIncrease={handleQtyIncrease}
+                /> */}
                 {/* Size picker */}
                 <div className="mt-8">
                   <div className="flex items-center justify-between">
