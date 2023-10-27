@@ -14,6 +14,12 @@ import { CardProductType, SelectedImgType } from '@/types/product'
 import SetColor from '@/app/product/[productId]/components/SetColor'
 import SetQuantity from './SetQuantity'
 import ProductImage from './ProductImage'
+import { RadioReceiverIcon } from 'lucide-react'
+import ListRating from './ListRating'
+import { useAppSelector } from '@/redux/store'
+import { AppDispatch } from '@/redux/store'
+import { useDispatch } from 'react-redux'
+import { addItem, removeAll } from '@/redux/slices/cardSlice'
 
 const product = {
   name: 'Basic Tee',
@@ -95,7 +101,7 @@ const reviews = {
   featured: [
     {
       id: 1,
-      rating: 5,
+      rating: 4,
       content: `
         <p>This icon pack is just what I need for my latest project. There's an icon for just about anything I could ever need. Love the playful look!</p>
       `,
@@ -107,7 +113,7 @@ const reviews = {
     },
     {
       id: 2,
-      rating: 5,
+      rating: 3.5,
       content: `
         <p>Blown away by how polished this icon pack is. Everything looks so consistent and each SVG is optimized out of the box so I can use it directly with confidence. It would take me several hours to create a single icon this good, so it's a steal at this price.</p>
       `,
@@ -140,6 +146,10 @@ function classNames(...classes: string[]) {
 export default function ProductDetails() {
   const [selectedColor, setSelectedColor] = useState(product.colors[0])
   const [selectedSize, setSelectedSize] = useState(product.sizes[2])
+
+  const dispatch = useDispatch<AppDispatch>()
+  const items = useAppSelector((state) => state.cardReducer)
+  console.log(items)
 
   // from course
   // const [cardProduct, setCardProduct] = useState<CardProductType>({
@@ -289,6 +299,16 @@ export default function ProductDetails() {
               </div>
             </div>
             <Separator className="my-2" />
+            {/* <Rating
+            dir='ltr'
+              name="rating"
+              value={rating}
+              precision={1}
+              onChange={(_, value) => {
+                setRating(value)
+              }}
+              icon={<RadioReceiverIcon fontSize="inherit" />}
+            /> */}
             {/* custom image gallery  */}
             {/* <ProductImage
               cardProduct={cardProduct}
@@ -342,7 +362,7 @@ export default function ProductDetails() {
             </Tab.Group>
 
             <div className="mt-8 lg:col-span-5">
-              <form>
+              <form onSubmit={() => dispatch(removeAll())}>
                 {/* Color picker */}
                 <div>
                   <h2 className="text-sm font-medium text-gray-900">رنگ</h2>
@@ -511,6 +531,9 @@ export default function ProductDetails() {
           </div>
         </div>
       </div>
+
+      <ListRating product={reviews} />
+
       <div className="mx-auto my-16 w-full max-w-2xl lg:col-span-4 lg:mt-0 lg:max-w-none">
         <Tab.Group as="div">
           <div className="border-b  border-gray-200">
@@ -657,6 +680,7 @@ export default function ProductDetails() {
             </Tab.Panel> */}
           </Tab.Panels>
         </Tab.Group>
+        L
       </div>
     </div>
   )
