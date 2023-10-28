@@ -1,5 +1,5 @@
 'use client'
-import { Fragment, useCallback, useState } from 'react'
+import { Fragment, useCallback, useEffect, useState } from 'react'
 import { StarIcon } from '@heroicons/react/20/solid'
 import { RadioGroup, Tab } from '@headlessui/react'
 import {
@@ -147,9 +147,24 @@ export default function ProductDetails() {
   const [selectedColor, setSelectedColor] = useState(product.colors[0])
   const [selectedSize, setSelectedSize] = useState(product.sizes[2])
 
-  const dispatch = useDispatch<AppDispatch>()
-  const items = useAppSelector((state) => state.cardReducer)
-  console.log(items)
+  // Check if product is in card
+  // const [isProductInCard, setIsProductInCard] = useState(false)
+
+  // useEffect(() => {
+  //   if (carProduct) {
+  //     setIsProductInCard(false)
+  //     const existingIndex = cardProducts.findIndex(
+  //       (item) => item.id === product.id
+  //     )
+  //     if (existingIndex > -1) {
+  //       setIsProductInCard(true)
+  //     }
+  //   }
+  // }, [cardProducts])
+
+  // const dispatch = useDispatch<AppDispatch>()
+  // const items = useAppSelector((state) => state.cardReducer)
+  // console.log(items)
 
   // from course
   // const [cardProduct, setCardProduct] = useState<CardProductType>({
@@ -362,7 +377,7 @@ export default function ProductDetails() {
             </Tab.Group>
 
             <div className="mt-8 lg:col-span-5">
-              <form onSubmit={() => dispatch(removeAll())}>
+              <form>
                 {/* Color picker */}
                 <div>
                   <h2 className="text-sm font-medium text-gray-900">رنگ</h2>
@@ -472,6 +487,7 @@ export default function ProductDetails() {
                   className="mt-8 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 >
                   اضافه کردن
+                  {/* {isProductInCard ? "محصول اضافه شده":"اضافه کردن"} */}
                 </button>
               </form>
 

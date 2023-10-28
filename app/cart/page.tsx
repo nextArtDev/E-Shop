@@ -1,12 +1,12 @@
 import React from 'react'
-import ShoppingCard from './components/ShoppingCard'
+import CartClient from './components/CartClient'
 
 type Props = {}
 
 const page = (props: Props) => {
   return (
     <div>
-      <ShoppingCard />
+      <CartClient />
     </div>
   )
 }
