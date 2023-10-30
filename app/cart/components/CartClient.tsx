@@ -1,16 +1,24 @@
 'use client'
+import SetQuantity from '@/app/product/[productId]/components/SetQuantity'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
+import { formatPrice } from '@/lib/utils'
 import { CheckIcon, ClockIcon } from '@heroicons/react/20/solid'
-import { ArrowBigLeft, ArrowLeft } from 'lucide-react'
+import { ArrowBigLeft, ArrowLeft, Trash } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
+import { useAppSelector } from '@/redux/store'
+import { AppDispatch } from '@/redux/store'
+import { useDispatch } from 'react-redux'
+import { removeItem } from '@/redux/slices/cardSlice'
+import { useEffect } from 'react'
 
 const products = [
   {
     id: 1,
     name: 'Artwork Tee',
     href: '#',
-    price: '$32.00',
+    price: '320000',
     color: 'Mint',
     size: 'Medium',
     inStock: true,
@@ -22,7 +30,7 @@ const products = [
     id: 2,
     name: 'Basic Tee',
     href: '#',
-    price: '$32.00',
+    price: '840000',
     color: 'Charcoal',
     inStock: false,
     leadTime: '7-8 years',
@@ -35,6 +43,79 @@ const products = [
 ]
 
 export default function CartClient() {
+  // const dispatch = useDispatch<AppDispatch>()
+  // const items = useAppSelector((state) => state.cardReducer)
+  // console.log(items)
+
+  // NOT NEEDED (Because of reducers and redux and its for react-context)
+  // const handleQtyIncrease = useCallback(
+  //   (product) => {
+  //     let updatedCart
+  //     if (cartProduct) {
+  //       updatedCart = [...cartProduct]
+  //     }
+  //     const existingIndex = cardProducts.findIndex(
+  //       (item) => item.id === product.id
+  //     )
+  //     if (existingIndex > -1) {
+  //       updatedCart[existingIndex].quantity = ++updatedCart[existingIndex]
+  //         .quantity
+  //     }
+  //     setCartProduct(updatedCart)
+  //   },
+  //   [product]
+  // )
+
+  // const handleQtyDecrease = useCallback(
+  //   (product) => {
+  //     let updatedCart
+  // if(products.quantity ===1)return
+  //     if (cartProduct) {
+  //       updatedCart = [...cartProduct]
+  //     }
+  //     const existingIndex = cardProducts.findIndex(
+  //       (item) => item.id === product.id
+  //     )
+  //     if (existingIndex > -1) {
+  //       updatedCart[existingIndex].quantity = --updatedCart[existingIndex]
+  //         .quantity
+  //     }
+  //     setCartProduct(updatedCart)
+  //   },
+  //   [product]
+  // )
+
+  // TOTAL
+  //Former
+  // const totalPrice = items.reduce((total, item) => {
+  //   return total + Number(item.price)
+  // }, 0)
+
+  //new (It have to Be in summary page)
+
+  // useEffect(() => {
+  //   if (products) {
+  //     const [total, qty] = products?.reduce(
+  //       (acc, item) => {
+  //         const itemTotal = item.price * item.quantity
+
+  //         acc.total += itemTotal
+  //         acc.qty += item.quantity
+
+  //         return acc
+  //       },
+  //       {
+  //         total: 0,
+  //         qty: 0,
+  //       }
+  //     )
+
+  // If we dont use it immediatly
+  // setCartTotal(qty)
+  // setCartTotalAmount(total)
+  //   }
+  // }, [products])
+
   if (!products || products.length === 0) {
     return (
       <div className="flex flex-col items-center py-8">
@@ -72,27 +153,30 @@ export default function CartClient() {
               {products.length > 0 &&
                 products.map((product) => (
                   <li key={product.id} className="flex py-6">
-                    <div className="flex-shrink-0">
-                      <img
+                    <div className="relative flex-shrink-0 h-24 w-24">
+                      <Image
+                        fill
+                        // width={96}
+                        // height={96}
                         src={product.imageSrc}
                         alt={product.imageAlt}
-                        className="h-24 w-24 rounded-md object-cover object-center sm:h-32 sm:w-32"
+                        className="absolute rounded-md object-cover object-center sm:h-32 sm:w-32"
                       />
                     </div>
 
                     <div className="mr-4 flex flex-1 flex-col sm:ml-6">
                       <div>
-                        <div className="flex justify-between">
-                          <h4 className="text-sm">
-                            <a
-                              href={product.href}
-                              className="font-medium text-gray-700 hover:text-gray-800"
+                        <div className="flex justify-between ">
+                          <h4 className="text-sm truncate">
+                            <Link
+                              href={`/product/${product.id}`}
+                              className="font-medium text-gray-700 hover:text-gray-800  "
                             >
                               {product.name}
-                            </a>
+                            </Link>
                           </h4>
                           <p className="ml-4 text-sm font-medium text-gray-900">
-                            {product.price}
+                            {formatPrice.format(+product.price)} تومان
                           </p>
                         </div>
                         <p className="mt-1 text-sm text-gray-500">
@@ -101,6 +185,14 @@ export default function CartClient() {
                         <p className="mt-1 text-sm text-gray-500">
                           {product.size}
                         </p>
+                        <div className="mt-2">
+                          {/* <SetQuantity
+                            cardCounter
+                            // cardProduct={product}
+                            // handleQtyIncrease={dispatch(quantityIncrease(item))}
+                            // handleQtyDecrease={dispatch((quantityDecrease(item))}
+                          /> */}
+                        </div>
                       </div>
 
                       <div className="mt-4 flex flex-1 items-end justify-between">
@@ -124,12 +216,14 @@ export default function CartClient() {
                           </span>
                         </p>
                         <div className="ml-4">
-                          <button
-                            type="button"
-                            className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+                          <Button
+                            variant={'outline'}
+                            onClick={() => {}}
+                            className="border border-indigo-200 text-sm font-medium text-indigo-300 hover:text-indigo-500"
                           >
-                            <span className="text-rose-300">حذف</span>
-                          </button>
+                            <Trash size={'small'} />
+                            {/* <span className="">حذف</span> */}
+                          </Button>
                         </div>
                       </div>
                     </div>
@@ -149,7 +243,7 @@ export default function CartClient() {
                 <div className="flex items-center justify-between">
                   <dt className="text-base font-medium text-gray-900">مجموع</dt>
                   <dd className="ml-4 text-base font-medium text-gray-900">
-                    $96.00
+                    {formatPrice.format(1160000)} تومان
                   </dd>
                 </div>
               </dl>
@@ -168,7 +262,7 @@ export default function CartClient() {
             </div>
             <div className="flex flex-col mt-6 text-center text-sm">
               <div className="relative">
-                <p className="absolute top-[50%] right-[50%] translate-x-[-50%] translate-y-[-50%] font-bold px-4 bg-white">
+                <p className="absolute top-[50%] right-[50%] translate-x-[-50%] translate-y-[-50%] font-bold  bg-white">
                   یا
                 </p>
                 <Separator className="" />

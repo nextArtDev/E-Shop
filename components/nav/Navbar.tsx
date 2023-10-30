@@ -8,7 +8,9 @@ import {
 } from '@heroicons/react/24/outline'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
+import { useAppSelector } from '@/redux/store'
+import { useRouter } from 'next/navigation'
 
 interface LandingProps {}
 
@@ -168,6 +170,20 @@ function classNames(...classes: any[]) {
 export default function Navbar() {
   const [open, setOpen] = useState(false)
 
+  const [isMounted, setIsMounted] = useState(false)
+  const cart = useAppSelector((state) => state.cardReducer)
+
+  //Our cart uses local storage, so this cause hydration error
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  const router = useRouter()
+
+  if (!isMounted) {
+    return null
+  }
+
   return (
     <div className="bg-gray-700">
       {/* Mobile menu */}
@@ -285,7 +301,7 @@ export default function Navbar() {
                 <div className="space-y-6 border-t border-gray-200 px-4 py-6">
                   <div className="flow-root">
                     <Link
-                      href="#"
+                      href="/sign-up"
                       className="-m-2 block p-2 font-medium text-gray-900"
                     >
                       ایجاد حساب
@@ -293,7 +309,7 @@ export default function Navbar() {
                   </div>
                   <div className="flow-root">
                     <Link
-                      href="#"
+                      href="/sign-in"
                       className="-m-2 block p-2 font-medium text-gray-900"
                     >
                       ورود
@@ -313,13 +329,13 @@ export default function Navbar() {
             <div className="mx-auto flex h-10 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
               <div className="flex items-center gap-x-6">
                 <Link
-                  href="#"
+                  href="/sign-in"
                   className="text-sm font-medium text-white hover:text-gray-100"
                 >
                   ورود
                 </Link>
                 <Link
-                  href="#"
+                  href="/sign-up"
                   className="text-sm font-medium text-white hover:text-gray-100"
                 >
                   ایجاد حساب
@@ -334,7 +350,7 @@ export default function Navbar() {
               <div className="flex h-16 items-center justify-between">
                 {/* Logo (lg+) */}
                 <div className="hidden lg:flex lg:flex-1 lg:items-center">
-                  <Link href="#">
+                  <Link href="/">
                     <span className="sr-only">Your Company</span>
                     <Image
                       fill
@@ -483,7 +499,7 @@ export default function Navbar() {
                 </div>
 
                 {/* Logo (lg-) */}
-                <Link href="#" className="lg:hidden">
+                <Link href="/#" className="lg:hidden">
                   <span className="sr-only">Your Company</span>
                   <img
                     src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
@@ -504,7 +520,7 @@ export default function Navbar() {
                     {/* Cart */}
                     <div className="ml-4 flow-root lg:ml-8">
                       <Link
-                        href="#"
+                        href="/cart"
                         className="group -m-2 flex items-center p-2"
                       >
                         <ShoppingBagIcon
@@ -512,7 +528,7 @@ export default function Navbar() {
                           aria-hidden="true"
                         />
                         <span className="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800">
-                          0
+                          {cart.items.length}
                         </span>
                         <span className="sr-only">items in cart, view bag</span>
                       </Link>

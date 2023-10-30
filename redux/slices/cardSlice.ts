@@ -33,6 +33,21 @@ const cardSlice = createSlice({
     removeAll: (state) => {
       state.items = []
     },
+    quantityIncrease: (state, action: PayloadAction<Product>) => {
+      const index = state.items.findIndex(
+        (item) => item.id === action.payload.id
+      )
+      if (index !== -1) {
+        state.items[index].quantity += 1
+      }
+    },
+
+    quantityDecrease: (state, action: PayloadAction<Product>) => {
+      const item = state.items.find((item) => item.id === action.payload.id)
+      if (item) {
+        item.quantity -= 1
+      }
+    },
 
     // increment: (state) => state.items.quantity + 1,
     // decrement: (state) => state.items.quantity - 1,
