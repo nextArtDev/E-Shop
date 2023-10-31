@@ -12,7 +12,7 @@ const SignUp = () => {
         <h1 className="text-2xl text-blue-950 font-semibold tracking-tight">
           عضو شوید
         </h1>
-        <p className="text-sm max-w-xs mx-auto"></p>
+        {/* <p className="text-sm max-w-xs mx-auto"></p> */}
       </div>
       <UserSignUpForm />
       <p className="px-8 text-center text-sm text-blue-950 ">

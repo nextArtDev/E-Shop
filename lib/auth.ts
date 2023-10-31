@@ -47,7 +47,7 @@ export const authOptions: NextAuthOptions = {
             phone: phone,
           },
         })
-        console.log(existingUser)
+        // console.log(existingUser)
         if (!existingUser) {
           return null
         }
@@ -114,6 +114,7 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: '/sign-in',
   },
+
   session: {
     strategy: 'jwt',
   },

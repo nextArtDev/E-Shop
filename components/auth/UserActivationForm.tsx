@@ -55,44 +55,32 @@ export function UserActivationForm({ phoneNumber: phone }: pageProps) {
     onError: (err) => {
       if (err instanceof AxiosError) {
         if (err.response?.status === 409) {
-          // return loginToast()
-          // return <p>وارد کردن کد تایید الزامی است.</p>
           return toast({
             title: 'وارد کردن کد تایید الزامی است.',
-            // description: 'لطفا بعدا امتحان کنید.',
             variant: 'destructive',
           })
         }
       }
       if (err instanceof AxiosError) {
         if (err.response?.status === 400) {
-          // return loginToast()
-          // return <p>هنوز ثبت نام نکرده‌اید.</p>
           return toast({
             title: 'هنوز ثبت نام نکرده‌اید.',
-            // description: 'لطفا بعدا امتحان کنید.',
             variant: 'destructive',
           })
         }
       }
       if (err instanceof AxiosError) {
         if (err.response?.status === 401) {
-          // return loginToast()
-          // return <p>کد تایید منقضی شده است..</p>
           return toast({
             title: 'کد تایید منقضی شده است.',
-            // description: 'لطفا بعدا امتحان کنید.',
             variant: 'destructive',
           })
         }
       }
       if (err instanceof AxiosError) {
         if (err.response?.status === 402) {
-          // return loginToast()
-          // return <p>کد ارسالی معتبر نیست.</p>
           return toast({
             title: 'کد ارسالی معتبر نیست.',
-            // description: 'لطفا بعدا امتحان کنید.',
             variant: 'destructive',
           })
         }
@@ -198,7 +186,7 @@ export function UserActivationForm({ phoneNumber: phone }: pageProps) {
               <FormControl>
                 <Input
                   type="number"
-                  placeholder="000000"
+                  placeholder="_ _ _ _"
                   {...field}
                   className=" text-lg sm:text-xl font-bold tracking-[0.5rem] md:tracking-[0.75rem] text-center w-48 placeholder:text-gray-400"
                 />

@@ -8,22 +8,22 @@ import { FC } from 'react'
 
 const page: FC = () => {
   return (
-    <div className="absolute inset-0 w-full h-screen bg-red-gradient overflow-hidden ">
-      <div className="pt-24 h-full max-w-2xl mx-auto flex flex-col items-center justify-center gap-20 ">
-        <Link
+    // <div className="absolute inset-0 w-full h-screen bg-red-gradient overflow-hidden ">
+    <div className="pt-8 h-full max-w-2xl mx-auto flex flex-col items-center justify-center gap-20 ">
+      {/* <Link
           href="/"
           className={cn(
             buttonVariants({ variant: 'ghost' }),
             'self-start -mt-10 border  text-blue-950 '
           )}
         >
-          {/* <ChevronRight className="mr-2  h-6 w-6" /> */}
-          صفحه اصلی
-        </Link>
 
-        <SignUp />
-      </div>
+          صفحه اصلی
+        </Link> */}
+
+      <SignUp />
     </div>
+    // </div>
   )
 }
 

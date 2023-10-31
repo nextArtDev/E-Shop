@@ -24,8 +24,6 @@ const FormSchema = z.object({
   name: z.string().min(2, {
     message: 'نام شما باید بیشتر از 2 کاراکتر باشد',
   }),
-  //z.string().regex("^09\\d{9}$")
-  //^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$
   phone: z
     .string()
     .regex(new RegExp('^09\\d{9}$'), {
@@ -68,7 +66,6 @@ export function UserSignUpForm() {
           // return loginToast()
           return toast({
             title: 'کاربر با این شماره موبایل وجود دارد.',
-            //  description: 'لطفا بعدا امتحان کنید.',
             variant: 'destructive',
           })
         }
@@ -163,7 +160,10 @@ export function UserSignUpForm() {
                 />
               </FormControl>
               <FormDescription className="text-white/50">
-                شماره شما نمایش داده نمی‌شود.
+                {/* شماره شما نمایش داده نمی‌شود. */}
+                <p className="text-blue-700">
+                  کد تایید به این شماره ارسال خواهد شد.
+                </p>
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -188,9 +188,9 @@ export function UserSignUpForm() {
         <Button
           type="submit"
           disabled={isLoading}
-          className="bg-blue-950 hover:bg-gray-gradient hover:text-blue-950 "
+          className="bg-blue-950 hover:bg-blue-500 hover:text-white "
         >
-          عضویت
+          ارسال کد تایید به شماره موبایل
         </Button>
       </form>
     </Form>
