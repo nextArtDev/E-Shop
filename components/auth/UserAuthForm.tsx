@@ -50,24 +50,21 @@ export function UserAuthForm() {
       // if ((res.data.response.status = 409)) {
       //   router.push(`activation/${data.phone}`)
       // }
-      await signIn('credentials', {
+      const callback = await signIn('credentials', {
         // `${JSON.stringify(data)}`,
         ...data,
         redirect: false,
       })
+      if (callback?.error === 'CredentialsSignin') {
+        return toast({
+          title: 'شماره یا رمز عبور اشتباه است.',
+          variant: 'destructive',
+        })
+      }
 
+      // console.log(callback?.ok)
       router.push('/')
-      // toast({
-      //   title: 'You submitted the following values:',
-      //   description: (
-      //     <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-      //       <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-      //     </pre>
-      //   ),
-      // })
       // form.reset()
-      // router.push('/')
-      // console.log(res)
     } catch (error: any) {
       // toast({
       //   title: 'شما هنوز ثبت نام نکرده‌اید',

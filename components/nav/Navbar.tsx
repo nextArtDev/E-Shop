@@ -11,6 +11,8 @@ import Link from 'next/link'
 import { Fragment, useEffect, useState } from 'react'
 import { useAppSelector } from '@/redux/store'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
+import UserMenu from './UserMenu'
 
 interface LandingProps {}
 
@@ -170,6 +172,12 @@ function classNames(...classes: any[]) {
 export default function Navbar() {
   const [open, setOpen] = useState(false)
 
+  const { data: session, status, update } = useSession()
+  const user = session?.user
+
+  console.log(user?.name)
+  console.log(status)
+
   const [isMounted, setIsMounted] = useState(false)
   const cart = useAppSelector((state) => state.cardReducer)
 
@@ -186,6 +194,7 @@ export default function Navbar() {
 
   return (
     <div className="bg-gray-700">
+      <UserMenu />
       {/* Mobile menu */}
       <Transition.Root show={open} as={Fragment}>
         <Dialog as="div" className="relative z-40 lg:hidden" onClose={setOpen}>

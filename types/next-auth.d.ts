@@ -55,9 +55,23 @@ declare module 'next-auth' {
     user: User & {
       id: string
       name: string
+      phone: string
     }
     // user: {
     //   id: string
     // } & Session['user']
   }
+}
+
+export type SafeUser = Omit<
+  User,
+  'createdAt',
+  'updatedAt',
+  'verified',
+  'role'
+> & {
+  createdAt: string
+  updatedAt: string
+  verified: boolean
+  role: string
 }

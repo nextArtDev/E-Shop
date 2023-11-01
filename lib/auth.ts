@@ -77,6 +77,7 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       session.user.id = token.id
       session.user.name = token.name
+      // session.user.phone = token.phone
 
       return session
     },
@@ -90,6 +91,7 @@ export const authOptions: NextAuthOptions = {
       if (account) {
         token.accessToken = account.access_token
         token.id = user.id
+
         // token.name = user.name
         // token.isVerified = user.isVerified
       }
