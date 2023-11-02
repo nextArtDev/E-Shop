@@ -34,6 +34,7 @@
     "clsx": "^2.0.0",
     "lucide-react": "^0.283.0",
     "moment": "^2.29.4",
+    "monopay": "^1.2.3",
     "next": "14.0.0",
     "next-auth": "^4.24.4",
     "next-themes": "^0.2.1",
@@ -48,6 +49,8 @@
     "tailwind-merge": "^1.14.0",
     "tailwindcss-animate": "^1.0.7",
     "trez-sms-client": "^1.0.4",
+    "zarinpal-checkout-v4": "^1.0.0",
+    "zarinpal-pay": "^1.0.3",
     "zod": "^3.22.4"
   },
   "devDependencies": {
