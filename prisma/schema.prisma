@@ -22,10 +22,10 @@ model User {
   isVerified       Boolean   @default(false)
   verificationCode Int?
   verificationDate DateTime?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  Review    Review[]
+  orders           Order[]
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  Reviews          Review[]
 }
 
 enum Role {
@@ -56,23 +56,84 @@ model File {
   userId Int?
 }
 
-model Images {
+model Image {
   id         Int      @id @default(autoincrement())
   url        String
-  doctor_id  Int?
+  key        String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+  product    Product? @relation(fields: [productId], references: [id])
+  productId  Int?
 }
 
 model Review {
-  id         Int      @id @default(autoincrement())
-  name       String
-  text       String
-  rating     Float
+  id      Int    @id @default(autoincrement())
+  // name       String
+  comment String
+  rating  Int
+
+  user      User?    @relation(fields: [user_id], references: [id])
+  user_id   Int?
+  product   Product? @relation(fields: [productId], references: [id])
+  productId Int?
+
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-  doctor_id  Int?
-
-  user    User? @relation(fields: [user_id], references: [id])
-  user_id Int?
 }
+
+model Order {
+  id              Int     @id @default(autoincrement())
+  userId          String
+  amount          Float
+  status          String?
+  deliveryStatus  String?
+  paymentIntentId String? @unique
+  // products         CartProductType[]
+  // address         Address?
+
+  user       User?    @relation(fields: [user_id], references: [id])
+  user_id    Int?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  price       Float
+  brand       String
+  category    String
+  inStock     Boolean  @default(true)
+  images      Image[]
+  reviews     Review[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+// type CartProductType {
+//   id            String
+//   name          String
+//   description   String
+//   category      String
+//   brand         String
+//   selectedImage Image
+//   quantity      Int
+//   price         Float
+// }
+
+// type Image {
+//   color     String
+//   colorCode String
+//   image     String
+// }
+
+// type Address {
+//   city        String
+//   country     String
+//   line1       String
+//   line2       String
+//   postal_code String
+//   state       String
+// }
