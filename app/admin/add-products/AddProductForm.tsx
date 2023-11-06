@@ -20,13 +20,14 @@ import { Checkbox } from '@/components/ui/checkbox'
 import FileInput from '@/components/FileInput'
 import Image from 'next/image'
 import { useDropzone } from 'react-dropzone'
-import { Trash2 } from 'lucide-react'
+import { FileUp, Trash2 } from 'lucide-react'
+import { Textarea } from '@/components/ui/textarea'
 
 interface AddProductFormProps {}
 
 const AddProductForm: FC<AddProductFormProps> = ({}) => {
   const [isLoading, setLoading] = useState(false)
-  const [files, setFiles] = useState([])
+  const [files, setFiles] = useState<File[]>([])
   const onDrop = (acceptedFiles: any) => {
     // Handle the dropped files here
     console.log(acceptedFiles)
@@ -53,6 +54,7 @@ const AddProductForm: FC<AddProductFormProps> = ({}) => {
     brand: z.string(),
     category: z.string(),
     inStock: z.boolean(),
+    // images: z.any(),
     images: z
       .custom<FileList>((val) => val instanceof FileList, 'Required')
       .refine((files) => files.length > 0, `Required`)
@@ -69,11 +71,6 @@ const AddProductForm: FC<AddProductFormProps> = ({}) => {
           ),
         'Only these types are allowed .jpg, .jpeg, .png and .webp'
       ),
-    // .refine((file) => file?.size <= MAX_FILE_SIZE, `Max image size is 5MB.`)
-    // .refine(
-    //   (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
-    //   "Only .jpg, .jpeg, .png and .webp formats are supported."
-    // )
     price: z.string(),
   })
   // 1. Define your form.
@@ -85,7 +82,7 @@ const AddProductForm: FC<AddProductFormProps> = ({}) => {
       brand: '',
       category: '',
       inStock: false,
-      images: [],
+      // images: [],
       price: '',
     },
   })
@@ -96,9 +93,9 @@ const AddProductForm: FC<AddProductFormProps> = ({}) => {
     // ✅ This will be type-safe and validated.
     console.log(values)
   }
-
+  // console.log(form)
   return (
-    <div className="py-8">
+    <div className="py-8 mx-auto w-[90%] md:w-[80%] max-w-7xl">
       <h2 className="text-xl font-semibold text-center">اضافه کردن محصول</h2>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -111,9 +108,9 @@ const AddProductForm: FC<AddProductFormProps> = ({}) => {
                 <FormControl>
                   <Input placeholder="نام محصول" {...field} />
                 </FormControl>
-                <FormDescription>
+                {/* <FormDescription>
                   این نام در صفحه محصول نمایش داده می‌شود.
-                </FormDescription>
+                </FormDescription> */}
                 <FormMessage />
               </FormItem>
             )}
@@ -125,11 +122,14 @@ const AddProductForm: FC<AddProductFormProps> = ({}) => {
               <FormItem>
                 <FormLabel>توضیحات محصول</FormLabel>
                 <FormControl>
-                  <Input placeholder="توضیحات" {...field} />
+                  <Textarea
+                    placeholder=" توضیحات محصول را بنویسید..."
+                    {...field}
+                  />
                 </FormControl>
-                <FormDescription>
+                {/* <FormDescription>
                   این توضیحات در صفحه محصول نمایش داده می‌شود.
-                </FormDescription>
+                </FormDescription> */}
                 <FormMessage />
               </FormItem>
             )}
@@ -143,9 +143,9 @@ const AddProductForm: FC<AddProductFormProps> = ({}) => {
                 <FormControl>
                   <Input placeholder="برند محصول" {...field} />
                 </FormControl>
-                <FormDescription>
+                {/* <FormDescription>
                   این برند در صفحه محصول نمایش داده می‌شود.
-                </FormDescription>
+                </FormDescription> */}
                 <FormMessage />
               </FormItem>
             )}
@@ -159,9 +159,9 @@ const AddProductForm: FC<AddProductFormProps> = ({}) => {
                 <FormControl>
                   <Input placeholder="دسته محصول" {...field} />
                 </FormControl>
-                <FormDescription>
+                {/* <FormDescription>
                   این دسته بندی در صفحه محصول نمایش داده می‌شود.
-                </FormDescription>
+                </FormDescription> */}
                 <FormMessage />
               </FormItem>
             )}
@@ -173,11 +173,16 @@ const AddProductForm: FC<AddProductFormProps> = ({}) => {
               <FormItem>
                 <FormLabel>وضعیت </FormLabel>
                 <FormControl>
-                  <Checkbox placeholder="وضعیت محصول" {...field} />
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                    placeholder="وضعیت محصول"
+                    // {...field}
+                  />
                 </FormControl>
-                <FormDescription>
+                {/* <FormDescription>
                   این وضعیت در صفحه محصول نمایش داده می‌شود.
-                </FormDescription>
+                </FormDescription> */}
                 <FormMessage />
               </FormItem>
             )}
@@ -187,11 +192,17 @@ const AddProductForm: FC<AddProductFormProps> = ({}) => {
             name="images"
             render={({ field: { onChange }, ...field }) => (
               <FormItem>
-                <FormLabel>عکس محصول</FormLabel>
+                <FormLabel className="mx-auto cursor-pointer bg-gray-200 rounded-xl flex flex-col justify-center gap-4 items-center border-[4px] border-black/40 border-dashed w-full h-32 shadow-2xl ">
+                  {/* <div className=""> */}
+                  عکسهای محصول
+                  <FileUp size={42} className="opacity-75" />
+                  {/* </div> */}
+                </FormLabel>
                 <FormControl>
                   <Input
                     type="file"
                     accept="image/*"
+                    className="hidden"
                     multiple={true}
                     disabled={form.formState.isSubmitting}
                     {...field}
@@ -214,10 +225,12 @@ const AddProductForm: FC<AddProductFormProps> = ({}) => {
 
                       // Validate and update uploaded file
                       const newFiles = dataTransfer.files
+                      setFiles(Array.from(newFiles))
+
                       onChange(newFiles)
-                      setFiles((prev) => [...prev, ...newFiles])
                     }}
                   />
+
                   {/* https://stackblitz.com/edit/input-file-react-hook-form?file=src%2FForm.js */}
                   {/* <div
                     className="flex justify-center items-center w-36 h-36 bg-gray-400 rounded-md border border-dashed "
@@ -241,45 +254,46 @@ const AddProductForm: FC<AddProductFormProps> = ({}) => {
                     )}
                   </div> */}
                   {/* <FileInput
-                  // {...field}
-                  accept="image/png, image/jpg, image/jpeg, image/gif"
-                  multiple
-                  name="images"
-                  // mode="append"
-                /> */}
+                    // {...field}
+                    accept="image/png, image/jpg, image/jpeg, image/gif"
+                    multiple
+                    name="images"
+                    // mode="append"
+                  /> */}
                 </FormControl>
-                <FormDescription>
-                  این نام در صفحه محصول نمایش داده می‌شود.
+                <FormDescription className="flex justify-center items-center">
+                  {!!files?.length && (
+                    <div className="flex flex-wrap mt-4">
+                      {files.map((file, i) => {
+                        return (
+                          <div className=" relative " key={i}>
+                            <Image
+                              src={URL.createObjectURL(file)}
+                              alt=""
+                              width={90}
+                              height={90}
+                              className="m-2 rounded-3xl border-white border-2 shadow-2xl"
+                            />
+                            {/* <Trash2
+                              onClick={() => {
+                                const newf = files.filter(
+                                  (f, index) => f !== file
+                                )
+                                // console.log(newf)
+                                setFiles(newf)
+                              }}
+                              className="cursor-pointer absolute -bottom-4 left-1/2 text-white z-20 bg-red-500 rounded-full p-0.5"
+                            /> */}
+                          </div>
+                        )
+                      })}
+                    </div>
+                  )}
                 </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
-          {!!files?.length && (
-            <div className=" grid gap-0.5 grid-cols-4  mt-2">
-              {files.map((file, i) => {
-                return (
-                  <div className="relative" key={i}>
-                    <Image
-                      src={URL.createObjectURL(file)}
-                      alt=""
-                      width={100}
-                      height={100}
-                      className="rounded-md "
-                    />
-                    <Trash2
-                      onClick={() => {
-                        const newf = files.filter((f, index) => f !== file)
-                        console.log(newf)
-                        return setFiles([...newf])
-                      }}
-                      className="cursor-pointer absolute -bottom-4 left-1/2 text-white z-20 bg-red-500 rounded-full p-0.5"
-                    />
-                  </div>
-                )
-              })}
-            </div>
-          )}
           <FormField
             control={form.control}
             name="price"
@@ -289,15 +303,15 @@ const AddProductForm: FC<AddProductFormProps> = ({}) => {
                 <FormControl>
                   <Input placeholder="قیمت محصول" {...field} />
                 </FormControl>
-                <FormDescription>
+                {/* <FormDescription>
                   این قیمت در صفحه محصول نمایش داده می‌شود.
-                </FormDescription>
+                </FormDescription> */}
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button disabled={isLoading} type="submit">
-            Submit
+          <Button className="w-full py-6" disabled={isLoading} type="submit">
+            اضافه کردن محصول
           </Button>
         </form>
       </Form>

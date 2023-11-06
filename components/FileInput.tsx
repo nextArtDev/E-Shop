@@ -13,10 +13,10 @@ interface IFileInputProps
 }
 
 const FileInput: FC<IFileInputProps> = (props) => {
-  const { name } = props
-  console.log(props)
+  const { name = 'images' } = props
+  // console.log(props)
   const { register, unregister, setValue, watch } = useFormContext()
-  const files: File[] = watch(name)
+  const files: File[] = watch('images')
   const onDrop = useCallback<DropzoneOptions['onDrop']>(
     (droppedFiles) => {
       setValue(name, droppedFiles, { shouldValidate: true })
@@ -25,7 +25,8 @@ const FileInput: FC<IFileInputProps> = (props) => {
   )
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: props.accept,
+    accept: 'image/png, image/jpg, image/jpeg, image/gif',
+    // accept: props.accept,
   })
   useEffect(() => {
     register(name)
@@ -35,17 +36,13 @@ const FileInput: FC<IFileInputProps> = (props) => {
   }, [register, unregister, name])
   return (
     <>
-      <label
-        className="block text-gray-700 text-sm font-bold mb-2 capitalize"
-        htmlFor={name}
-      >
-        {label}
-      </label>
       <div {...getRootProps()}>
         <input
           {...props}
           className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           id={name}
+          accept="image/png, image/jpg, image/jpeg, image/gif"
+          // {...props.field}
           {...getInputProps()}
         />
         <div
