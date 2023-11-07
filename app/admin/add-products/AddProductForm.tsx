@@ -22,6 +22,15 @@ import Image from 'next/image'
 import { useDropzone } from 'react-dropzone'
 import { FileUp, Trash2 } from 'lucide-react'
 import { Textarea } from '@/components/ui/textarea'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { categories } from '@/lib/categories'
+import CategoryInput from '@/components/CategoryInput'
 
 interface AddProductFormProps {}
 
@@ -93,12 +102,28 @@ const AddProductForm: FC<AddProductFormProps> = ({}) => {
     // ✅ This will be type-safe and validated.
     console.log(values)
   }
-  // console.log(form)
+
+  // Custom field in react-hook-form
+  // const category = form.watch('category')
+  // const setCustomValue = (id: string, value: any) => {
+  //   // form.setValue(id, value, {
+  //   form.setValue('category', value, {
+  //     shouldDirty: true,
+  //     shouldTouch: true,
+  //     shouldValidate: true,
+  //   })
+  // }
+
   return (
     <div className="py-8 mx-auto w-[90%] md:w-[80%] max-w-7xl">
-      <h2 className="text-xl font-semibold text-center">اضافه کردن محصول</h2>
+      <h2 className="text-black text-xl font-semibold text-center">
+        اضافه کردن محصول
+      </h2>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-8 text-black"
+        >
           <FormField
             control={form.control}
             name="name"
@@ -150,18 +175,67 @@ const AddProductForm: FC<AddProductFormProps> = ({}) => {
               </FormItem>
             )}
           />
-          <FormField
+          {/* <FormField
             control={form.control}
             name="category"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>دسته محصول</FormLabel>
                 <FormControl>
-                  <Input placeholder="دسته محصول" {...field} />
+                  <div className="grid  grid-cols-2 gap-3 md:grid-cols-3 max-h-[50vh] overflow-y-auto ">
+                    {categories.map((item) => {
+                      if (item.label === 'همه') return
+                      return (
+                        <div key={item.label} className="col-span">
+                          <CategoryInput
+                            onClick={(category) =>
+                              setCustomValue('category', category)
+                            }
+                            selected={category === item.label}
+                            label={item.label}
+                            icon={item.icon}
+                          />
+                        </div>
+                      )
+                    })}
+                  </div>
                 </FormControl>
-                {/* <FormDescription>
-                  این دسته بندی در صفحه محصول نمایش داده می‌شود.
-                </FormDescription> */}
+
+                <FormMessage />
+              </FormItem>
+            )}
+          /> */}
+          <FormField
+            control={form.control}
+            name="category"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>دسته‌بندی</FormLabel>
+                <Select
+                  dir="rtl"
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="یک دسته بندی را برای محصول انتخاب کنید." />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {categories.map((category) => {
+                      if (category.label === 'همه') return
+                      const { label, icon: Icon } = category
+                      return (
+                        <SelectItem key={label} value={label}>
+                          <span className="flex justify-center items-center gap-2">
+                            <Icon />
+                            {label}
+                          </span>
+                        </SelectItem>
+                      )
+                    })}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
@@ -192,10 +266,10 @@ const AddProductForm: FC<AddProductFormProps> = ({}) => {
             name="images"
             render={({ field: { onChange }, ...field }) => (
               <FormItem>
-                <FormLabel className="mx-auto cursor-pointer bg-gray-200 rounded-xl flex flex-col justify-center gap-4 items-center border-[4px] border-black/40 border-dashed w-full h-32 shadow-2xl ">
+                <FormLabel className="mx-auto cursor-pointer bg-gray-100 rounded-xl flex flex-col justify-center gap-4 items-center border-2 border-black/40 border-dashed w-full h-32 shadow-md ">
                   {/* <div className=""> */}
                   عکسهای محصول
-                  <FileUp size={42} className="opacity-75" />
+                  <FileUp size={42} className="opacity-60" />
                   {/* </div> */}
                 </FormLabel>
                 <FormControl>
