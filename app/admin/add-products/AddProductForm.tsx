@@ -15,7 +15,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { FC, useState } from 'react'
+import { FC, useCallback, useEffect, useState } from 'react'
 import { Checkbox } from '@/components/ui/checkbox'
 import FileInput from '@/components/FileInput'
 import Image from 'next/image'
@@ -31,6 +31,8 @@ import {
 } from '@/components/ui/select'
 import { categories } from '@/lib/categories'
 import CategoryInput from '@/components/CategoryInput'
+import { ImageType, colors } from '@/lib/colors'
+import SelectColor from '@/components/SelectColor'
 
 interface AddProductFormProps {}
 
@@ -103,6 +105,44 @@ const AddProductForm: FC<AddProductFormProps> = ({}) => {
     console.log(values)
   }
 
+  // Custom images field
+  const [images, setImages] = useState<ImageType[] | null>()
+  const [isProductCreated, setIsProductCreated] = useState(false)
+
+  useEffect(() => {
+    form.setValue('images', images, {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true,
+    })
+  }, [images])
+
+  useEffect(() => {
+    if (isProductCreated) {
+      form.reset()
+      setImages(null)
+      setIsProductCreated(false)
+    }
+  }, [isProductCreated])
+
+  const addImageToState = useCallback((value: ImageType) => {
+    setImages((prev) => {
+      if (!prev) {
+        return [value]
+      }
+      return [...prev, value]
+    })
+  }, [])
+  const removeImageFromState = useCallback((value: ImageType) => {
+    setImages((prev) => {
+      if (prev) {
+        const filteredImages = prev.filter((item) => item.color !== value.color)
+        return filteredImages
+      }
+      return prev
+    })
+  }, [])
+  console.log('imagesi', images)
   // Custom field in react-hook-form
   // const category = form.watch('category')
   // const setCustomValue = (id: string, value: any) => {
@@ -254,9 +294,7 @@ const AddProductForm: FC<AddProductFormProps> = ({}) => {
                     // {...field}
                   />
                 </FormControl>
-                {/* <FormDescription>
-                  این وضعیت در صفحه محصول نمایش داده می‌شود.
-                </FormDescription> */}
+
                 <FormMessage />
               </FormItem>
             )}
@@ -267,10 +305,8 @@ const AddProductForm: FC<AddProductFormProps> = ({}) => {
             render={({ field: { onChange }, ...field }) => (
               <FormItem>
                 <FormLabel className="mx-auto cursor-pointer bg-gray-100 rounded-xl flex flex-col justify-center gap-4 items-center border-2 border-black/40 border-dashed w-full h-32 shadow-md ">
-                  {/* <div className=""> */}
                   عکسهای محصول
                   <FileUp size={42} className="opacity-60" />
-                  {/* </div> */}
                 </FormLabel>
                 <FormControl>
                   <Input
@@ -364,6 +400,33 @@ const AddProductForm: FC<AddProductFormProps> = ({}) => {
                     </div>
                   )}
                 </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="images"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  رنگهای موجود محصول و عکسهای مربوط به آن را بارگزاری کنید
+                </FormLabel>
+                <FormControl>
+                  {/* <Input placeholder="قیمت محصول" {...field} /> */}
+                  <div className="grid grid-cols-2 gap-3">
+                    {colors.map((item, index) => (
+                      <SelectColor
+                        key={index}
+                        item={item}
+                        addImageToState={() => {}}
+                        removeImageFromState={() => {}}
+                        isProductCreated={isProductCreated}
+                      />
+                    ))}
+                  </div>
+                </FormControl>
+
                 <FormMessage />
               </FormItem>
             )}
