@@ -33,17 +33,20 @@ import { categories } from '@/lib/categories'
 import CategoryInput from '@/components/CategoryInput'
 import { ImageType, colors } from '@/lib/colors'
 import SelectColor from '@/components/SelectColor'
+import { uploadImagesAction } from '@/actions/product.actions'
+import { uploadToS3 } from '@/lib/uploadToS3'
 
 interface AddProductFormProps {}
 
 const AddProductForm: FC<AddProductFormProps> = ({}) => {
   const [isLoading, setLoading] = useState(false)
   const [files, setFiles] = useState<File[]>([])
-  const onDrop = (acceptedFiles: any) => {
-    // Handle the dropped files here
-    console.log(acceptedFiles)
-    setFiles(acceptedFiles)
-  }
+
+  // const onDrop = (acceptedFiles: any) => {
+  //   // Handle the dropped files here
+  //   console.log(acceptedFiles)
+  //   setFiles(acceptedFiles)
+  // }
   const MAX_IMAGE_SIZE = 5242880 // 5 MB
   const ALLOWED_IMAGE_TYPES = [
     'image/jpeg',
@@ -51,7 +54,7 @@ const AddProductForm: FC<AddProductFormProps> = ({}) => {
     'image/webp',
     'image/jpg',
   ]
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
+  // const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
   const formSchema = z.object({
     name: z
       .string()
@@ -99,50 +102,66 @@ const AddProductForm: FC<AddProductFormProps> = ({}) => {
   })
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
+
+    for (const file of files) {
+      console.log('file', file)
+      const result = await uploadToS3(file)
+      console.log('result', result)
+    }
+
     console.log(values)
   }
+  // async function uploadImage(files: File[]) {
+  //   for (const file of files) {
+  //     console.log('file', file)
+  //     const result = await uploadImagesAction(file)
+  //     console.log('images', result)
+  //   }
+  // }
 
   // Custom images field
-  const [images, setImages] = useState<ImageType[] | null>()
-  const [isProductCreated, setIsProductCreated] = useState(false)
+  // const [images, setImages] = useState<ImageType[] | null>()
+  // const [isProductCreated, setIsProductCreated] = useState(false)
 
-  useEffect(() => {
-    form.setValue('images', images, {
-      shouldDirty: true,
-      shouldTouch: true,
-      shouldValidate: true,
-    })
-  }, [images])
+  // useEffect(() => {
+  //   if (images && images.length > 0) {
+  //     form.setValue('images', images, {
+  //       shouldDirty: true,
+  //       shouldTouch: true,
+  //       shouldValidate: true,
+  //     })
+  //   }
+  // }, [images])
 
-  useEffect(() => {
-    if (isProductCreated) {
-      form.reset()
-      setImages(null)
-      setIsProductCreated(false)
-    }
-  }, [isProductCreated])
+  // useEffect(() => {
+  //   if (isProductCreated) {
+  //     form.reset()
+  //     setImages(null)
+  //     setIsProductCreated(false)
+  //   }
+  // }, [isProductCreated])
 
-  const addImageToState = useCallback((value: ImageType) => {
-    setImages((prev) => {
-      if (!prev) {
-        return [value]
-      }
-      return [...prev, value]
-    })
-  }, [])
-  const removeImageFromState = useCallback((value: ImageType) => {
-    setImages((prev) => {
-      if (prev) {
-        const filteredImages = prev.filter((item) => item.color !== value.color)
-        return filteredImages
-      }
-      return prev
-    })
-  }, [])
-  console.log('imagesi', images)
+  // const addImageToState = useCallback((value: ImageType) => {
+  //   setImages((prev) => {
+  //     if (!prev) {
+  //       return [value]
+  //     }
+  //     return [...prev, value]
+  //   })
+  // }, [])
+  // const removeImageFromState = useCallback((value: ImageType) => {
+  //   setImages((prev) => {
+  //     if (prev) {
+  //       const filteredImages = prev.filter((item) => item.color !== value.color)
+  //       return filteredImages
+  //     }
+  //     return prev
+  //   })
+  // }, [])
+  // console.log('images', images)
   // Custom field in react-hook-form
   // const category = form.watch('category')
   // const setCustomValue = (id: string, value: any) => {
@@ -316,7 +335,7 @@ const AddProductForm: FC<AddProductFormProps> = ({}) => {
                     multiple={true}
                     disabled={form.formState.isSubmitting}
                     {...field}
-                    onChange={(event) => {
+                    onChange={async (event) => {
                       // Triggered when user uploaded a new file
                       // FileList is immutable, so we need to create a new one
                       const dataTransfer = new DataTransfer()
@@ -335,6 +354,7 @@ const AddProductForm: FC<AddProductFormProps> = ({}) => {
 
                       // Validate and update uploaded file
                       const newFiles = dataTransfer.files
+
                       setFiles(Array.from(newFiles))
 
                       onChange(newFiles)
@@ -404,7 +424,7 @@ const AddProductForm: FC<AddProductFormProps> = ({}) => {
               </FormItem>
             )}
           />
-          <FormField
+          {/* <FormField
             control={form.control}
             name="images"
             render={({ field }) => (
@@ -413,7 +433,6 @@ const AddProductForm: FC<AddProductFormProps> = ({}) => {
                   رنگهای موجود محصول و عکسهای مربوط به آن را بارگزاری کنید
                 </FormLabel>
                 <FormControl>
-                  {/* <Input placeholder="قیمت محصول" {...field} /> */}
                   <div className="grid grid-cols-2 gap-3">
                     {colors.map((item, index) => (
                       <SelectColor
@@ -430,7 +449,7 @@ const AddProductForm: FC<AddProductFormProps> = ({}) => {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
           <FormField
             control={form.control}
             name="price"
