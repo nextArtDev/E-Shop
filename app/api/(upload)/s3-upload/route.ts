@@ -1,7 +1,8 @@
+import { prisma } from '@/lib/prisma'
 import S3 from 'aws-sdk/clients/s3'
 import { randomUUID } from 'crypto'
+import { useSearchParams } from 'next/navigation'
 import { NextRequest, NextResponse } from 'next/server'
-import qs from 'qs'
 
 // async function uploadImageToS3(
 //   file: Buffer,
@@ -36,9 +37,12 @@ const s3 = new S3({
 export async function GET(request: NextRequest, response: NextResponse) {
   try {
     // const ex = (request.query.fileType as string).split('/')[1]
+    const productId = request.nextUrl.searchParams.get('productId')
+    const fileType = request.nextUrl.searchParams.get('fileType')
 
-    const rawParams = request.url.split('?')[1]
-    const ex = rawParams.split('%2F')[1]
+    // const rawParams = request.url.split('?')[1]
+    const ex = fileType!.split('/')[1]
+    // console.log(ex)
     const Key = `${randomUUID()}.${ex}`
     // const Key = `${randomUUID()}`
 
@@ -48,50 +52,65 @@ export async function GET(request: NextRequest, response: NextResponse) {
       Expires: 60,
       ContentType: `image/${ex}`,
     }
-
+    if (!fileType || !productId) return
     const uploadUrl = await s3.getSignedUrl('putObject', s3Params)
 
     // we should use this url to make a post request
-    console.log('uploadUrl', uploadUrl)
+    // console.log('uploadUrl', uploadUrl)
+    if (!uploadUrl) return
 
-    return NextResponse.json({ success: true, uploadUrl, key: Key })
+    const image = await prisma.image.create({
+      data: {
+        key: Key,
+        url: uploadUrl,
+        productId: +productId,
+      },
+    })
+    // console.log(image.id)
+
+    return NextResponse.json({
+      success: true,
+      uploadUrl,
+      key: Key,
+      // imageId: image.id,
+    })
   } catch (error) {
     console.error('Error uploading image:', error)
     NextResponse.json({ message: 'Error uploading image' })
   }
 }
-export async function POST(request: NextRequest, response: NextResponse) {
-  try {
-    // const ex = (request.query.fileType as string).split('/')[1]
+// export async function POST(request: NextRequest, response: NextResponse) {
+//   try {
+//     // const ex = (request.query.fileType as string).split('/')[1]
 
-    const rawParams = request.url.split('?')[1]
+//     const rawParams = request.url.split('?')[1]
 
-    // console.log(rawParams)
-    const ex = rawParams.split('%2F')[1]
-    // const Key = `${randomUUID()}.${ex}`
-    // const Key = `${randomUUID()}`
-    const { file } = await request.json()
-    console.log('file', file)
-    const key = file.key
-    const s3Params = {
-      Bucket: process.env.LIARA_BUCKET_NAME,
+//     // console.log(rawParams)
+//     const ex = rawParams.split('%2F')[1]
+//     // const Key = `${randomUUID()}.${ex}`
+//     // const Key = `${randomUUID()}`
+//     const { file } = await request.json()
+//     console.log('file', file)
+//     const key = file.key
+//     const s3Params = {
+//       Bucket: process.env.LIARA_BUCKET_NAME,
 
-      Key: key,
-      // Expires: 60,
-      // ContentType: `image/${ex}`,
-    }
+//       Key: key,
+//       // Expires: 60,
+//       // ContentType: `image/${ex}`,
+//     }
 
-    const uploadUrl = await s3.getSignedUrl('getObject', s3Params)
+//     const uploadUrl = await s3.getSignedUrl('getObject', s3Params)
 
-    // we should use this url to make a post request
-    console.log('uploadUrl', uploadUrl)
+//     // we should use this url to make a post request
+//     console.log('uploadUrl', uploadUrl)
 
-    return NextResponse.json({ success: true, uploadUrl })
-  } catch (error) {
-    console.error('Error uploading image:', error)
-    NextResponse.json({ message: 'Error uploading image' })
-  }
-}
+//     return NextResponse.json({ success: true, uploadUrl })
+//   } catch (error) {
+//     console.error('Error uploading image:', error)
+//     NextResponse.json({ message: 'Error uploading image' })
+//   }
+// }
 
 export async function DELETE(request: NextRequest, response: NextResponse) {
   try {

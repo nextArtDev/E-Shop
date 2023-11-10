@@ -16,13 +16,15 @@ const s3 = new S3({
   signatureVersion: 'v4',
 })
 
-export async function createProduct(params: Product) {
+export async function createProductAction(params: any) {
   try {
     const currentUser = await getCurrentUser()
     if (!currentUser || currentUser.role !== 'ADMIN') return
 
-    const { name, description, price, brand, category, inStock, images, path } =
-      params
+    console.log(params)
+    const { name, description, price, brand, category, inStock, path } =
+      JSON.parse(params)
+
     const product = await prisma.product.create({
       data: {
         name,
@@ -31,13 +33,14 @@ export async function createProduct(params: Product) {
         brand,
         category,
         inStock,
-        images,
+        // images,
       },
     })
+    // console.log(product)
 
     revalidatePath(path)
 
-    return product
+    // return product
   } catch (error) {
     console.log(error)
     throw error

@@ -33,14 +33,22 @@ import { categories } from '@/lib/categories'
 import CategoryInput from '@/components/CategoryInput'
 import { ImageType, colors } from '@/lib/colors'
 import SelectColor from '@/components/SelectColor'
-import { uploadImagesAction } from '@/actions/product.actions'
+import {
+  createProductAction,
+  uploadImagesAction,
+} from '@/actions/product.actions'
 import { uploadToS3 } from '@/lib/uploadToS3'
+import { toast } from '@/components/ui/use-toast'
+import { usePathname } from 'next/navigation'
+import { prisma } from '@/lib/prisma'
 
 interface AddProductFormProps {}
 
 const AddProductForm: FC<AddProductFormProps> = ({}) => {
+  const pathname = usePathname()
   const [isLoading, setLoading] = useState(false)
   const [files, setFiles] = useState<File[]>([])
+  const [uploadedImagesUrl, setUploadedImagesUrl] = useState<string[]>([])
 
   // const onDrop = (acceptedFiles: any) => {
   //   // Handle the dropped files here
@@ -105,14 +113,38 @@ const AddProductForm: FC<AddProductFormProps> = ({}) => {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
+    setLoading(true)
+    try {
+      const productResults = await createProductAction(
+        JSON.stringify({ ...values, path: pathname })
 
-    for (const file of files) {
-      console.log('file', file)
-      const result = await uploadToS3(file)
-      console.log('result', result)
+        // images: uploadedImages,
+      )
+      // console.log(productResults.id)
+      if (!productResults) {
+        return toast({
+          title: 'مشکلی پیش آمده، لطفا بعدا امتحان کنید.',
+          variant: 'destructive',
+        })
+      }
+      for (const file of files) {
+        const result = await uploadToS3(file, productResults.id)
+        // setUploadedImagesUrl((prev) => [...prev, result])
+      }
+    } catch (error) {
+      console.log(error)
+      toast({
+        title: 'مشکلی پیش آمده، لطفا بعدا امتحان کنید.',
+        variant: 'destructive',
+      })
+    } finally {
+      setLoading(false)
     }
 
-    console.log(values)
+    // let uploadedImages: string[] = []
+
+    //@ts-ignore
+    // values.images = uploadedImages
   }
   // async function uploadImage(files: File[]) {
   //   for (const file of files) {
@@ -341,11 +373,11 @@ const AddProductForm: FC<AddProductFormProps> = ({}) => {
                       const dataTransfer = new DataTransfer()
 
                       // Add old images
-                      // if (images) {
-                      //   Array.from(images).forEach((image) =>
-                      //     dataTransfer.items.add(image)
-                      //   )
-                      // }
+                      if (files) {
+                        Array.from(files).forEach((image) =>
+                          dataTransfer.items.add(image)
+                        )
+                      }
 
                       // Add newly uploaded images
                       Array.from(event.target.files!).forEach((image) =>

@@ -58,8 +58,8 @@ model File {
 
 model Image {
   id         Int      @id @default(autoincrement())
-  url        String
-  key        String
+  url        String   @db.Text
+  key        String   @db.Text
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   product    Product? @relation(fields: [productId], references: [id])
