@@ -39,13 +39,14 @@ import {
 } from '@/actions/product.actions'
 import { uploadToS3 } from '@/lib/uploadToS3'
 import { toast } from '@/components/ui/use-toast'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 
 interface AddProductFormProps {}
 
 const AddProductForm: FC<AddProductFormProps> = ({}) => {
   const pathname = usePathname()
+  const router = useRouter()
   const [isLoading, setLoading] = useState(false)
   const [files, setFiles] = useState<File[]>([])
   const [uploadedImagesUrl, setUploadedImagesUrl] = useState<string[]>([])
@@ -120,7 +121,7 @@ const AddProductForm: FC<AddProductFormProps> = ({}) => {
 
         // images: uploadedImages,
       )
-      // console.log(productResults.id)
+      // console.log(productResults?.id)
       if (!productResults) {
         return toast({
           title: 'مشکلی پیش آمده، لطفا بعدا امتحان کنید.',
@@ -131,6 +132,14 @@ const AddProductForm: FC<AddProductFormProps> = ({}) => {
         const result = await uploadToS3(file, productResults.id)
         // setUploadedImagesUrl((prev) => [...prev, result])
       }
+      form.reset()
+
+      toast({
+        title: 'محصول ایجاد شد.',
+        variant: 'default',
+      })
+      setFiles([])
+      router.refresh()
     } catch (error) {
       console.log(error)
       toast({

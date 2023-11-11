@@ -1,14 +1,25 @@
 import { getCurrentUser } from '@/actions/getCurrentUser'
-import { createProduct } from '@/actions/product.actions'
+
 import React from 'react'
+
+import { getProducts } from '@/actions/getProducts'
+import NullData from '@/components/NullData'
+import ManageProductsClient from './ManageProductsClient'
 
 type Props = {}
 
 const page = async (props: Props) => {
-  // const product = await createProduct({})
   const currentUser = await getCurrentUser()
-  console.log(currentUser?.role)
-  return <div>page</div>
+
+  // console.log(currentUser?.role)
+  const products = await getProducts({ category: null })
+  if (!currentUser || currentUser.role !== 'ADMIN')
+    return <NullData title="اجازه دسترسی ندارید!" />
+  return (
+    <div className="pt-8">
+      <ManageProductsClient products={products} />
+    </div>
+  )
 }
 
 export default page

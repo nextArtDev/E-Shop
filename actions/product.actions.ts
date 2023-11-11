@@ -40,7 +40,7 @@ export async function createProductAction(params: any) {
 
     revalidatePath(path)
 
-    // return product
+    return product
   } catch (error) {
     console.log(error)
     throw error
