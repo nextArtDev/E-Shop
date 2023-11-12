@@ -77,3 +77,39 @@ export async function uploadImagesAction(params: File) {
     throw error
   }
 }
+export async function toggleStockAction(params: {
+  id: number
+  inStock: boolean
+}) {
+  try {
+    const currentUser = await getCurrentUser()
+    if (!currentUser || currentUser.role !== 'ADMIN') return
+
+    const { id, inStock } = params
+
+    const product = await prisma.product.update({
+      where: { id },
+      data: { inStock },
+    })
+    // return uploadUrl
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
+}
+export async function deleteProductAction(params: { id: number }) {
+  try {
+    const currentUser = await getCurrentUser()
+    if (!currentUser || currentUser.role !== 'ADMIN') return
+
+    const { id } = params
+
+    const product = await prisma.product.delete({
+      where: { id },
+    })
+    // return uploadUrl
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
+}
