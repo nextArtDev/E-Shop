@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import S3 from 'aws-sdk/clients/s3'
 import { randomUUID } from 'crypto'
-import { useSearchParams } from 'next/navigation'
+
 import { NextRequest, NextResponse } from 'next/server'
 
 // async function uploadImageToS3(
@@ -114,21 +114,42 @@ export async function GET(request: NextRequest, response: NextResponse) {
 
 export async function DELETE(request: NextRequest, response: NextResponse) {
   try {
-    const rawParams = request.url.split('?')[1]
-    const Key = rawParams.split('key=')[1]
-    // const Key = KeyUrl.split('.')[0]
+    // const rawParams = request.url.split('?')[1]
+    // const Key = rawParams.split('key=')[1]
+    // // const Key = KeyUrl.split('.')[0]
+    const id = await request.json()
 
-    console.log(Key)
-    const s3Params = {
-      Bucket: process.env.LIARA_BUCKET_NAME!,
-      Key: '4dbdc45c-69db-45b0-8e3a-0ba8bf9f25bc.png',
+    const product = await prisma.product.findUnique({
+      where: {
+        id: +id,
+      },
+      include: {
+        images: true,
+      },
+    })
+
+    const productImages = product?.images
+
+    if (!productImages) return
+    for (const productImage of productImages) {
+      try {
+        const { key } = productImage
+        console.log(key)
+        const s3Params = {
+          Bucket: process.env.LIARA_BUCKET_NAME!,
+          Key: key,
+        }
+        await s3.deleteObject(s3Params, (error, data) => {})
+
+        await prisma.image.deleteMany({
+          where: {
+            productId: +id,
+          },
+        })
+      } catch (error) {
+        console.log(error)
+      }
     }
-
-    await s3.deleteObject(s3Params)
-    // const uploadUrl = await s3.deleteObject(s3Params)
-
-    // we should use this url to make a post request
-    // console.log('uploadUrl', uploadUrl)
 
     return NextResponse.json({ success: true })
   } catch (error) {

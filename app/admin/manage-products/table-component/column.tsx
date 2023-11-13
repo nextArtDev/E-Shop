@@ -26,7 +26,10 @@ import Status from '@/components/Status'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
 import { toast } from '@/components/ui/use-toast'
-import { toggleStockAction } from '@/actions/product.actions'
+import {
+  deleteProductAction,
+  toggleStockAction,
+} from '@/actions/product.actions'
 
 export const columns: ColumnDef<Product>[] = [
   {
@@ -113,6 +116,22 @@ export const columns: ColumnDef<Product>[] = [
           toast({ title: 'مشکلی پیش آمده.', variant: 'destructive' })
         }
       }
+      const handleDelete = async () => {
+        toast({ title: 'در حال حذف محصول...' })
+        try {
+          const response = await axios.delete('/api/s3-upload', {
+            data: product.id,
+          })
+          await deleteProductAction({
+            id: product.id,
+          })
+          toast({ title: 'محصول با موفقیت حذف شد.', variant: 'destructive' })
+
+          window.location.reload()
+        } catch (error) {
+          toast({ title: 'مشکلی پیش آمده.', variant: 'destructive' })
+        }
+      }
       return (
         <DropdownMenu dir="rtl">
           <DropdownMenuTrigger asChild>
@@ -151,7 +170,10 @@ export const columns: ColumnDef<Product>[] = [
               </Button>
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <Button className="w-full flex items-center justify-center bg-rose-400 gap-2">
+              <Button
+                onClick={handleDelete}
+                className="w-full flex items-center justify-center bg-rose-400 gap-2"
+              >
                 <Trash2 /> حذف
               </Button>
             </DropdownMenuItem>
