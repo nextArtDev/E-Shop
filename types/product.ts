@@ -1,3 +1,5 @@
+import { Image } from '@prisma/client'
+
 export type CardProductType = {
   id: string
   name: string

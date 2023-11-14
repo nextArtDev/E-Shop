@@ -1,7 +1,8 @@
 import { prisma } from '@/lib/prisma'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
-import * as bcrypt from 'bcrypt'
+// import * as bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs-react'
 // Define Zod Schema for input validation
 
 const userSchema = z.object({

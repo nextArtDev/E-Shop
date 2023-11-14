@@ -20,7 +20,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import FileInput from '@/components/FileInput'
 import Image from 'next/image'
 import { useDropzone } from 'react-dropzone'
-import { FileUp, Trash2 } from 'lucide-react'
+import { FileUp, Loader, Trash2 } from 'lucide-react'
 import { Textarea } from '@/components/ui/textarea'
 import {
   Select,
@@ -508,7 +508,11 @@ const AddProductForm: FC<AddProductFormProps> = ({}) => {
             )}
           />
           <Button className="w-full py-6" disabled={isLoading} type="submit">
-            اضافه کردن محصول
+            {isLoading ? (
+              <Loader className="animate-spin" />
+            ) : (
+              ' اضافه کردن محصول'
+            )}
           </Button>
         </form>
       </Form>

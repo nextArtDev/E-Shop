@@ -21,3 +21,28 @@ export async function getOrders(params: IProductParams) {
     throw new Error(error)
   }
 }
+
+type IOrderParams = {
+  orderId?: string
+}
+export async function getOrderById(params: IOrderParams) {
+  try {
+    const { orderId } = params
+    if (!orderId) return
+
+    const order = await prisma.order.findUnique({
+      where: {
+        id: +orderId,
+      },
+      include: {
+        user: true,
+      },
+    })
+
+    if (!order) return
+
+    return order
+  } catch (error: any) {
+    throw new Error(error)
+  }
+}

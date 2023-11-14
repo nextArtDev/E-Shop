@@ -81,13 +81,19 @@ model Review {
   updated_at DateTime @updatedAt
 }
 
+// enum Delivery {
+//   PENDING
+//   DELIVERD
+// }
+
 model Order {
-  id              Int     @id @default(autoincrement())
-  userId          String
+  id              Int      @id @default(autoincrement())
+  // userId          String
   amount          Float
-  status          String?
-  deliveryStatus  String?
-  paymentIntentId String? @unique
+  status          Boolean? @default(false)
+  // deliveryStatus  Delivery? @default(PENDING)
+  deliveryStatus  Boolean? @default(false)
+  paymentIntentId String?  @unique
   // products         CartProductType[]
   // address         Address?
 

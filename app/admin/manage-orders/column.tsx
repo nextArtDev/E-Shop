@@ -1,47 +1,48 @@
 'use client'
-import { FC } from 'react'
-import { ColumnDef } from '@tanstack/react-table'
-import { Product } from '@prisma/client'
-import { formatPrice } from '@/lib/utils'
+import { toggleDeliveryAction } from '@/actions/order.action'
 import {
-  ArrowUpDown,
-  CircleDotDashedIcon,
-  Eye,
-  MoreHorizontal,
-  PanelTopClose,
-  Recycle,
-  Trash2,
-} from 'lucide-react'
+  deleteProductAction,
+  toggleStockAction,
+} from '@/actions/product.actions'
+import Status from '@/components/Status'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Checkbox } from '@/components/ui/checkbox'
-import Status from '@/components/Status'
-import axios from 'axios'
-import { useRouter } from 'next/navigation'
 import { toast } from '@/components/ui/use-toast'
+import { formatTimeToNow } from '@/lib/date-utils'
+import { formatPrice } from '@/lib/utils'
+import { Order } from '@prisma/client'
+import { ColumnDef } from '@tanstack/react-table'
+import axios from 'axios'
 import {
-  deleteProductAction,
-  toggleStockAction,
-} from '@/actions/product.actions'
+  AlertTriangle,
+  ArchiveRestore,
+  ArrowUpDown,
+  CircleDotDashedIcon,
+  Eye,
+  MoreHorizontal,
+  PanelTopClose,
+  Receipt,
+  Recycle,
+  Trash2,
+} from 'lucide-react'
 
-export const columns: ColumnDef<Product>[] = [
+export const columns: ColumnDef<Order>[] = [
   {
     accessorKey: 'id',
     header: () => <div className="text-right">آی‌دی</div>,
   },
   {
-    accessorKey: 'name',
-    header: () => <div className="text-right">نام</div>,
+    accessorKey: 'customer',
+    header: () => <div className="text-right">خریدار</div>,
   },
   {
-    accessorKey: 'price',
+    accessorKey: 'amount',
     header: ({ column }) => {
       return (
         <div className="text-right flex  ">
@@ -49,7 +50,7 @@ export const columns: ColumnDef<Product>[] = [
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
-            قیمت
+            مقدار
             <ArrowUpDown className="mr-2 h-4 w-4" />
           </Button>
         </div>
@@ -58,40 +59,84 @@ export const columns: ColumnDef<Product>[] = [
     cell: ({ row }) => {
       return (
         <div className="text-right font-medium text-rose-400 ">
-          {formatPrice.format(row.getValue('price'))}
+          {formatPrice.format(row.getValue('amount'))}
         </div>
       )
     },
   },
   {
-    accessorKey: 'category',
-    header: () => <div className="text-right">دسته‌بندی</div>,
-  },
-  {
-    accessorKey: 'brand',
-    header: () => <div className="text-right">برند</div>,
-  },
-  {
-    accessorKey: 'inStock',
-    header: () => <div className="text-center">وضعیت </div>,
+    accessorKey: 'date',
+    header: ({ column }) => {
+      return (
+        <div className="text-right flex  ">
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            تاریخ
+            <ArrowUpDown className="mr-2 h-4 w-4" />
+          </Button>
+        </div>
+      )
+    },
     cell: ({ row }) => {
-      const product = row.original
+      const order = row.original
+      return (
+        <div className="text-right font-medium text-rose-400 ">
+          {formatTimeToNow(order.created_at)}
+        </div>
+      )
+    },
+  },
+
+  {
+    accessorKey: 'paymentStatus',
+    header: () => <div className="text-center">پرداخت </div>,
+    cell: ({ row }) => {
+      const order = row.original
 
       return (
         <div>
-          {product.inStock ? (
+          {order.status ? (
             <Status
-              text="موجود"
-              icon={CircleDotDashedIcon}
+              text="پرداخت شده"
+              icon={Receipt}
               bg="bg-teal-200"
               color="text-teal-700"
             />
           ) : (
             <Status
-              icon={PanelTopClose}
+              icon={AlertTriangle}
               bg="bg-rose-200"
               color="text-rose-700"
-              text={'ناموجود'}
+              text={'پرداخت نشده'}
+            />
+          )}
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: 'deliveryStatus',
+    header: () => <div className="text-center">تحویل </div>,
+    cell: ({ row }) => {
+      const order = row.original
+
+      return (
+        <div>
+          {order.deliveryStatus ? (
+            <Status
+              text="تحویل شده"
+              icon={ArchiveRestore}
+              bg="bg-teal-200"
+              color="text-teal-700"
+            />
+          ) : (
+            <Status
+              icon={AlertTriangle}
+              bg="bg-rose-200"
+              color="text-rose-700"
+              text={'تحویل نشده'}
             />
           )}
         </div>
@@ -101,13 +146,13 @@ export const columns: ColumnDef<Product>[] = [
   {
     id: 'actions',
     cell: ({ row }) => {
-      const product = row.original
+      const order = row.original
 
       const handleToggle = async () => {
         try {
-          await toggleStockAction({
-            id: product.id,
-            inStock: !product.inStock,
+          await toggleDeliveryAction({
+            id: order.id,
+            deliveryStatus: !order.deliveryStatus,
           })
           toast({ title: 'وضعیت محصول آپدیت شد.' })
 
@@ -120,10 +165,10 @@ export const columns: ColumnDef<Product>[] = [
         toast({ title: 'در حال حذف محصول...' })
         try {
           const response = await axios.delete('/api/s3-upload', {
-            data: product.id,
+            data: order.id,
           })
           await deleteProductAction({
-            id: product.id,
+            id: order.id,
           })
           toast({ title: 'محصول با موفقیت حذف شد.', variant: 'destructive' })
 
@@ -142,12 +187,12 @@ export const columns: ColumnDef<Product>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">
             <DropdownMenuItem onClick={handleToggle}>
-              {product.inStock ? (
+              {order.deliveryStatus ? (
                 <Button
                   variant={'outline'}
                   className="text-rose-700 bg-rose-200 w-full flex items-center justify-center gap-2"
                 >
-                  تغییر به ناموجود
+                  تغییر به تحویل نشده
                   <Recycle />
                 </Button>
               ) : (
@@ -155,7 +200,7 @@ export const columns: ColumnDef<Product>[] = [
                   variant={'outline'}
                   className="text-teal-700 bg-teal-200 w-full flex items-center justify-center gap-2"
                 >
-                  تغییر به موجود
+                  تغییر به تحویل
                   <Recycle />
                 </Button>
               )}
@@ -165,14 +210,14 @@ export const columns: ColumnDef<Product>[] = [
               <Button
                 variant={'outline'}
                 className="w-full flex items-center justify-center gap-2"
-                onClick={() => window.location.href === `product/${product.id}`}
+                onClick={() => window.location.href === `/order/${order.id}`}
               >
                 <Eye /> مشاهده
               </Button>
             </DropdownMenuItem>
             <DropdownMenuItem>
               <Button
-                onClick={handleDelete}
+                onClick={() => {}}
                 className="w-full flex items-center justify-center bg-rose-400 gap-2"
               >
                 <Trash2 /> حذف
@@ -183,23 +228,23 @@ export const columns: ColumnDef<Product>[] = [
       )
     },
   },
-  //   {
-  //     id: 'select',
-  //     header: ({ table }) => (
-  //       <Checkbox
-  //         checked={table.getIsAllPageRowsSelected()}
-  //         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-  //         aria-label="Select all"
-  //       />
-  //     ),
-  //     cell: ({ row }) => (
-  //       <Checkbox
-  //         checked={row.getIsSelected()}
-  //         onCheckedChange={(value) => row.toggleSelected(!!value)}
-  //         aria-label="Select row"
-  //       />
-  //     ),
-  //     enableSorting: false,
-  //     enableHiding: false,
-  //   },
+  // {
+  //   id: 'select',
+  //   header: ({ table }) => (
+  //     <Checkbox
+  //       checked={table.getIsAllPageRowsSelected()}
+  //       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+  //       aria-label="Select all"
+  //     />
+  //   ),
+  //   cell: ({ row }) => (
+  //     <Checkbox
+  //       checked={row.getIsSelected()}
+  //       onCheckedChange={(value) => row.toggleSelected(!!value)}
+  //       aria-label="Select row"
+  //     />
+  //   ),
+  //   enableSorting: false,
+  //   enableHiding: false,
+  // },
 ]

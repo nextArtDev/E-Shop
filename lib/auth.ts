@@ -3,7 +3,8 @@ import CredentialsProvider from 'next-auth/providers/credentials'
 
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import { prisma } from './prisma'
-import { compare } from 'bcrypt'
+// import { compare } from 'bcrypt'
+import { compare } from 'bcryptjs-react'
 import { z } from 'zod'
 
 const FormSchema = z.object({

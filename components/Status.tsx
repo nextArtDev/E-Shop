@@ -15,7 +15,7 @@ const Status: FC<StatusProps> = ({ text, icon: Icon, bg, color }) => {
       className={cn(
         bg,
         color,
-        `py-2 rounded flex justify-evenly items-center gap-1 `
+        `py-2 rounded flex justify-evenly items-center gap-1 px-2`
       )}
     >
       {text} <Icon size={15} />{' '}

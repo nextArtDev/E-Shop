@@ -4,27 +4,6 @@ import { randomUUID } from 'crypto'
 
 import { NextRequest, NextResponse } from 'next/server'
 
-// async function uploadImageToS3(
-//   file: Buffer,
-//   fileName: string
-// ): Promise<string> {
-//   const resizedImageBuffer = await sharp(file)
-//     .resize(400, 500) // Specify your desired width or height for resizing
-//     .toBuffer()
-
-//   const params = {
-//     Bucket: process.env.LIARA_BUCKET_NAME as string,
-//     Key: `${Date.now()}-${fileName}`,
-//     Body: resizedImageBuffer,
-//     ContentType: 'image/jpeg', // Change the content type accordingly
-//   }
-
-//   const command = new PutObjectCommand(params)
-//   await s3Client.send(command)
-
-//   return fileName
-// }
-
 const s3 = new S3({
   apiVersion: '2006-03-01',
   endpoint: process.env.LIARA_ENDPOINT,
