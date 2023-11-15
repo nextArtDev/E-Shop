@@ -37,15 +37,16 @@ export async function GET(request: NextRequest, response: NextResponse) {
     // we should use this url to make a post request
     // console.log('uploadUrl', uploadUrl)
     if (!uploadUrl) return
+    // console.log()
+    const url = uploadUrl.split('?')[0]
 
     const image = await prisma.image.create({
       data: {
         key: Key,
-        url: uploadUrl,
+        url,
         productId: +productId,
       },
     })
-    // console.log(image.id)
 
     return NextResponse.json({
       success: true,

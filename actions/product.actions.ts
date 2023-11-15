@@ -47,6 +47,10 @@ export async function createProductAction(params: any) {
   }
 }
 export async function uploadImagesAction(params: File) {
+  const currentUser = await getCurrentUser()
+
+  if (!currentUser) return
+  if (currentUser.role !== 'ADMIN') return
   try {
     console.log('params', params)
     // const currentUser = await getCurrentUser()
@@ -81,6 +85,10 @@ export async function toggleStockAction(params: {
   id: number
   inStock: boolean
 }) {
+  const currentUser = await getCurrentUser()
+
+  if (!currentUser) return
+  if (currentUser.role !== 'ADMIN') return
   try {
     const currentUser = await getCurrentUser()
     if (!currentUser || currentUser.role !== 'ADMIN') return
@@ -98,6 +106,10 @@ export async function toggleStockAction(params: {
   }
 }
 export async function deleteProductAction(params: { id: number }) {
+  const currentUser = await getCurrentUser()
+
+  if (!currentUser) return
+  if (currentUser.role !== 'ADMIN') return
   try {
     const currentUser = await getCurrentUser()
     if (!currentUser || currentUser.role !== 'ADMIN') return

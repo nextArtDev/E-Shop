@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma'
+import { getCurrentUser } from './getCurrentUser'
 
 export interface IProductParams {
   category?: string | null
@@ -6,6 +7,11 @@ export interface IProductParams {
 }
 
 export async function getOrders(params: IProductParams) {
+  const currentUser = await getCurrentUser()
+
+  if (!currentUser) return
+  if (currentUser.role !== 'ADMIN') return
+
   try {
     const orders = await prisma.order.findMany({
       include: {
@@ -26,6 +32,10 @@ type IOrderParams = {
   orderId?: string
 }
 export async function getOrderById(params: IOrderParams) {
+  const currentUser = await getCurrentUser()
+
+  if (!currentUser) return
+  if (currentUser.role !== 'ADMIN') return
   try {
     const { orderId } = params
     if (!orderId) return

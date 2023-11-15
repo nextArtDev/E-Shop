@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma'
+import { getCurrentUser } from './getCurrentUser'
 
 export interface IProductParams {
   category?: string | null
@@ -6,6 +7,10 @@ export interface IProductParams {
 }
 
 export async function getProducts(params: IProductParams) {
+  const currentUser = await getCurrentUser()
+
+  // if (!currentUser) return
+  // if (currentUser.role !== 'ADMIN') return
   try {
     const { category, searchTerm } = params
     let searchString = searchTerm
@@ -39,6 +44,7 @@ export async function getProducts(params: IProductParams) {
             created_at: 'desc',
           },
         },
+        images: {},
       },
     })
 
