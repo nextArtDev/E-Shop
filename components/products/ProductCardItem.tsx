@@ -64,7 +64,7 @@ interface ExtendedProducts {
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
-const calculateAverageRating = (reviews: Review[]): number => {
+export const calculateAverageRating = (reviews: Review[]): number => {
   const totalRating = reviews.reduce((acc, review) => acc + review.rating, 0)
   const averageRating = totalRating / reviews.length
   return averageRating

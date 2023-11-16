@@ -54,9 +54,9 @@ import { Image as ImageType, Product, Review } from '@prisma/client'
 // ]
 interface ExtendedProducts {
   products: (Product & {
-    image: ImageType[]
+    images: ImageType[]
   } & {
-    review: Review[]
+    reviews: Review[]
   })[]
 }
 
@@ -67,31 +67,6 @@ function classNames(...classes: string[]) {
 export default function ProductCard({ products }: ExtendedProducts) {
   return (
     <div className="bg-white">
-      {products.map((product) => {
-        const { name, brand, description, image, price, review } = product
-
-        return (
-          <div key={product.id}>
-            {name}
-            {/* {product.images[0]?.map((img) => ( */}
-            <Image
-              key={product.images[0].id}
-              fill
-              src={product.images[0].url}
-              alt={product.name}
-              className="h-full w-full object-cover object-center"
-            />
-            {/* ))} */}
-            {product.reviews?.map((rev) => (
-              <div key={rev.id}>
-                <div>{rev.comment}</div>
-                <div>{rev.rating}</div>
-                {/* <div>{rev.created_at}</div> */}
-              </div>
-            ))}
-          </div>
-        )
-      })}
       <div className="mx-auto max-w-7xl overflow-hidden sm:px-6 lg:px-8">
         <h2 className="sr-only">Products</h2>
 
@@ -118,12 +93,12 @@ export default function ProductCard({ products }: ExtendedProducts) {
                  />
                  )
                 )} */}
-                {product.image &&
-                  product.image.map((img) => (
+                {product.images &&
+                  product.images.map((img) => (
                     <Image
                       key={img.url}
                       fill
-                      src={product.image[0].url}
+                      src={product.images[0].url}
                       alt={product.name}
                       className="h-full w-full object-cover object-center"
                     />
@@ -136,8 +111,8 @@ export default function ProductCard({ products }: ExtendedProducts) {
                     {product.name}
                   </Link>
                 </h3>
-                {product.review &&
-                  product.review.map((review) => (
+                {product.reviews &&
+                  product.reviews.map((review) => (
                     <div
                       key={review.id}
                       className="mt-3 flex flex-col items-center"
@@ -148,22 +123,22 @@ export default function ProductCard({ products }: ExtendedProducts) {
                           dir="rtl"
                           className="mt-1 pr-1 text-xs text-gray-500"
                         >
-                          {product.review && product.review.length} نظر
+                          {product.reviews && product.reviews.length} نظر
                           {/* {`(${review?.length} نظر)`} */}
                         </p>
-                        {review &&
+                        {/* {review &&
                           [0, 1, 2, 3, 4].map((rating) => (
                             <StarIcon
                               key={rating}
                               className={classNames(
-                                Number(product.review.rating) > rating
+                                Number(product.reviews.rating) > rating
                                   ? 'text-yellow-400'
                                   : 'text-gray-200',
                                 'h-5 w-5 flex-shrink-0'
                               )}
                               aria-hidden="true"
                             />
-                          ))}
+                          ))} */}
                         {/* MUI Rating  */}
                         {review && (
                           <Rating

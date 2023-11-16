@@ -44,7 +44,7 @@ export async function getProducts(params: IProductParams) {
             created_at: 'desc',
           },
         },
-        images: {},
+        images: true,
       },
     })
 

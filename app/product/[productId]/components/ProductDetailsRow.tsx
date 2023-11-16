@@ -20,10 +20,6 @@ import { useAppSelector } from '@/redux/store'
 import { AppDispatch } from '@/redux/store'
 import { useDispatch } from 'react-redux'
 import { addItem, removeAll } from '@/redux/slices/cardSlice'
-import { Image as ImageType, Product, Review, User } from '@prisma/client'
-import { calculateAverageRating } from '@/components/products/ProductCardItem'
-import { formatTimeToNow } from '@/lib/date-utils'
-import Avatar from './Avatar'
 
 const product = {
   name: 'Basic Tee',
@@ -143,20 +139,13 @@ const faqs = [
   },
   // More FAQs...
 ]
-interface ExtendedProducts {
-  product: Product & {
-    images: ImageType[]
-  } & {
-    reviews: Review[]
-  }
-}
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function ProductDetails({ product }: ExtendedProducts) {
-  // const [selectedColor, setSelectedColor] = useState(product.colors[0])
-  // const [selectedSize, setSelectedSize] = useState(product.sizes[2])
+export default function ProductDetailsRow() {
+  const [selectedColor, setSelectedColor] = useState(product.colors[0])
+  const [selectedSize, setSelectedSize] = useState(product.sizes[2])
 
   // Check if product is in card
   // const [isProductInCard, setIsProductInCard] = useState(false)
@@ -220,7 +209,7 @@ export default function ProductDetails({ product }: ExtendedProducts) {
           className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
         >
           <ol role="list" className="flex items-center space-x-4">
-            {/* {product.breadcrumbs.map((breadcrumb) => (
+            {product.breadcrumbs.map((breadcrumb) => (
               <li key={breadcrumb.id}>
                 <div className="flex items-center">
                   <Link
@@ -241,10 +230,10 @@ export default function ProductDetails({ product }: ExtendedProducts) {
                   </svg>
                 </div>
               </li>
-            ))} */}
+            ))}
             <li className="text-sm">
               <Link
-                href={`/product/${product.id}`}
+                href={product.href}
                 aria-current="page"
                 className="font-medium text-gray-500 hover:text-gray-600"
               >
@@ -265,71 +254,64 @@ export default function ProductDetails({ product }: ExtendedProducts) {
                 </p>
               </div>
               {/* Reviews */}
-              {
-                product.reviews && (
-                  // product.reviews.map((review) => (
-                  <div className="mt-4 py-4">
-                    <h2 className="sr-only">نظرات</h2>
-                    <div className="flex items-center ">
-                      <div className="ml-1 flex items-center text-xs">
-                        {/* {[0, 1, 2, 3, 4].map((rating) => (
-                          <StarIcon
-                            key={rating}
-                            className={classNames(
-                              product.rating > rating
-                                ? 'text-yellow-400'
-                                : 'text-gray-200',
-                              'h-5 w-5 flex-shrink-0'
+              <div className="mt-4 py-4">
+                <h2 className="sr-only">نظرات</h2>
+                <div className="flex items-center ">
+                  <div className="ml-1 flex items-center text-xs">
+                    {/* {[0, 1, 2, 3, 4].map((rating) => (
+                        <StarIcon
+                        key={rating}
+                        className={classNames(
+                            product.rating > rating
+                            ? 'text-yellow-400'
+                            : 'text-gray-200',
+                            'h-5 w-5 flex-shrink-0'
                             )}
-                            aria-hidden="true"
-                          />
-                        ))} */}
-                        <Rating
-                          // value={product.rating}
-                          value={calculateAverageRating(product.reviews)}
-                          readOnly
-                          precision={0.5}
-                          defaultValue={5}
-                          icon={
-                            <StarIcon
-                              fontSize="inherit"
-                              className={classNames(
-                                'text-yellow-400 h-5 w-5 flex-shrink-0'
-                              )}
-                            />
-                          }
-                          emptyIcon={
-                            <StarIcon
-                              fontSize="inherit"
-                              className="text-gray-200 h-5 w-5 flex-shrink-0"
-                            />
-                          }
-                        />
-                        <p className="text-sm mr-1 text-gray-700">
-                          {/* {product.reviews.rating} */}
-                          {calculateAverageRating(product.reviews)}
-                          <span className="sr-only"> out of 5 stars</span>
-                        </p>
-                      </div>
-                      <div
                         aria-hidden="true"
-                        className="ml-4 text-sm text-gray-300"
-                      >
-                        ·
-                      </div>
-                      <div className="ml-4 flex">
-                        <Link
-                          href="#"
-                          className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
-                        >
-                          دیدن همه {product.reviews.length} نظر
-                        </Link>
-                      </div>
-                    </div>
+                      />
+                    ))} */}
+                    <Rating
+                      value={product.rating}
+                      // value={productRating(product)}
+                      readOnly
+                      precision={0.5}
+                      defaultValue={5}
+                      icon={
+                        <StarIcon
+                          fontSize="inherit"
+                          className={classNames(
+                            'text-yellow-400 h-5 w-5 flex-shrink-0'
+                          )}
+                        />
+                      }
+                      emptyIcon={
+                        <StarIcon
+                          fontSize="inherit"
+                          className="text-gray-200 h-5 w-5 flex-shrink-0"
+                        />
+                      }
+                    />
+                    <p className="text-sm mr-1 text-gray-700">
+                      {product.rating}
+                      <span className="sr-only"> out of 5 stars</span>
+                    </p>
                   </div>
-                )
-                // ))
-              }
+                  <div
+                    aria-hidden="true"
+                    className="ml-4 text-sm text-gray-300"
+                  >
+                    ·
+                  </div>
+                  <div className="ml-4 flex">
+                    <Link
+                      href="#"
+                      className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+                    >
+                      دیدن همه {product.reviewCount} نظر
+                    </Link>
+                  </div>
+                </div>
+              </div>
             </div>
             <Separator className="my-2" />
             {/* <Rating
@@ -359,9 +341,10 @@ export default function ProductDetails({ product }: ExtendedProducts) {
                     >
                       {({ selected }) => (
                         <>
+                          <span className="sr-only">{image.name}</span>
                           <span className="absolute inset-0 overflow-hidden rounded-md">
                             <img
-                              src={image.url}
+                              src={image.imageSrc}
                               alt=""
                               className="h-full w-full object-cover object-center"
                             />
@@ -384,7 +367,7 @@ export default function ProductDetails({ product }: ExtendedProducts) {
                 {product.images.map((image) => (
                   <Tab.Panel key={image.id}>
                     <img
-                      src={image.url}
+                      src={image.imageSrc}
                       // alt={image.alt}
                       className="h-full w-full object-cover object-center sm:rounded-lg"
                     />
@@ -396,55 +379,53 @@ export default function ProductDetails({ product }: ExtendedProducts) {
             <div className="mt-8 lg:col-span-5">
               <form>
                 {/* Color picker */}
-                {/* {product?.color && (
-                  <div>
-                    <h2 className="text-sm font-medium text-gray-900">رنگ</h2>
+                <div>
+                  <h2 className="text-sm font-medium text-gray-900">رنگ</h2>
 
-                    <RadioGroup
-                      value={selectedColor}
-                      onChange={setSelectedColor}
-                      className="mt-2"
-                    >
-                      <RadioGroup.Label className="sr-only">
-                        Choose a color
-                      </RadioGroup.Label>
-                      <div className="flex items-center gap-x-3">
-                        {product.colors.map((color) => (
-                          <RadioGroup.Option
-                            key={color.name}
-                            value={color}
-                            className={({ active, checked }) =>
-                              classNames(
-                                color.selectedColor,
-                                active && checked ? 'ring ring-offset-1' : '',
-                                !active && checked ? 'ring-2' : '',
-                                'relative -m-0.5 flex cursor-pointer items-center justify-center rounded-full p-0.5 focus:outline-none'
-                              )
-                            }
-                          >
-                            <RadioGroup.Label as="span" className="sr-only">
-                              {color.name}
-                            </RadioGroup.Label>
-                            <span
-                              aria-hidden="true"
-                              className={classNames(
-                                color.bgColor,
-                                'h-8 w-8 rounded-full border border-black border-opacity-10'
-                              )}
-                            />
-                            {/* {
+                  <RadioGroup
+                    value={selectedColor}
+                    onChange={setSelectedColor}
+                    className="mt-2"
+                  >
+                    <RadioGroup.Label className="sr-only">
+                      Choose a color
+                    </RadioGroup.Label>
+                    <div className="flex items-center gap-x-3">
+                      {product.colors.map((color) => (
+                        <RadioGroup.Option
+                          key={color.name}
+                          value={color}
+                          className={({ active, checked }) =>
+                            classNames(
+                              color.selectedColor,
+                              active && checked ? 'ring ring-offset-1' : '',
+                              !active && checked ? 'ring-2' : '',
+                              'relative -m-0.5 flex cursor-pointer items-center justify-center rounded-full p-0.5 focus:outline-none'
+                            )
+                          }
+                        >
+                          <RadioGroup.Label as="span" className="sr-only">
+                            {color.name}
+                          </RadioGroup.Label>
+                          <span
+                            aria-hidden="true"
+                            className={classNames(
+                              color.bgColor,
+                              'h-8 w-8 rounded-full border border-black border-opacity-10'
+                            )}
+                          />
+                          {/* {
                             <SetColor
                               cardProduct={cardProduct}
                               images={product.images}
                               handleColorSelect={handleColorSelect}
                             />
                           } */}
-                {/* </RadioGroup.Option> */}
-                {/* ))} */}
-                {/* </div> */}
-                {/* </RadioGroup> */}
-                {/* </div> */}
-                {/* )}  */}
+                        </RadioGroup.Option>
+                      ))}
+                    </div>
+                  </RadioGroup>
+                </div>
                 {/* <SetQuantity
                   // cardProduct={}
                   // cardCounter={}
@@ -452,7 +433,7 @@ export default function ProductDetails({ product }: ExtendedProducts) {
                   handleQtyIncrease={handleQtyIncrease}
                 /> */}
                 {/* Size picker */}
-                {/* <div className="mt-8">
+                <div className="mt-8">
                   <div className="flex items-center justify-between">
                     <h2 className="text-sm font-medium text-gray-900">سایز</h2>
                     <Link
@@ -472,35 +453,34 @@ export default function ProductDetails({ product }: ExtendedProducts) {
                       انتخاب سایز
                     </RadioGroup.Label>
                     <div className="grid grid-cols-3 gap-3 sm:grid-cols-6">
-                      {product?.sizes &&
-                        product.sizes.map((size) => (
-                          <RadioGroup.Option
-                            key={size.name}
-                            value={size}
-                            className={({ active, checked }) =>
-                              classNames(
-                                size.inStock
-                                  ? 'cursor-pointer focus:outline-none'
-                                  : 'cursor-not-allowed opacity-25',
-                                active
-                                  ? 'ring-2 ring-indigo-500 ring-offset-2'
-                                  : '',
-                                checked
-                                  ? 'border-transparent bg-indigo-600 text-white hover:bg-indigo-700'
-                                  : 'border-gray-200 bg-white text-gray-900 hover:bg-gray-50',
-                                'flex items-center justify-center rounded-md border py-3 px-3 text-sm font-medium uppercase sm:flex-1'
-                              )
-                            }
-                            disabled={!size.inStock}
-                          >
-                            <RadioGroup.Label as="span">
-                              {size.name}
-                            </RadioGroup.Label>
-                          </RadioGroup.Option>
-                        ))}
+                      {product.sizes.map((size) => (
+                        <RadioGroup.Option
+                          key={size.name}
+                          value={size}
+                          className={({ active, checked }) =>
+                            classNames(
+                              size.inStock
+                                ? 'cursor-pointer focus:outline-none'
+                                : 'cursor-not-allowed opacity-25',
+                              active
+                                ? 'ring-2 ring-indigo-500 ring-offset-2'
+                                : '',
+                              checked
+                                ? 'border-transparent bg-indigo-600 text-white hover:bg-indigo-700'
+                                : 'border-gray-200 bg-white text-gray-900 hover:bg-gray-50',
+                              'flex items-center justify-center rounded-md border py-3 px-3 text-sm font-medium uppercase sm:flex-1'
+                            )
+                          }
+                          disabled={!size.inStock}
+                        >
+                          <RadioGroup.Label as="span">
+                            {size.name}
+                          </RadioGroup.Label>
+                        </RadioGroup.Option>
+                      ))}
                     </div>
                   </RadioGroup>
-                </div> */}
+                </div>
 
                 <button
                   type="submit"
@@ -568,7 +548,7 @@ export default function ProductDetails({ product }: ExtendedProducts) {
         </div>
       </div>
 
-      <ListRating product={product} />
+      <ListRating product={reviews} />
 
       <div className="mx-auto my-16 w-full max-w-2xl lg:col-span-4 lg:mt-0 lg:max-w-none">
         <Tab.Group as="div">
@@ -616,18 +596,17 @@ export default function ProductDetails({ product }: ExtendedProducts) {
             <Tab.Panel className="-mb-10">
               <h3 className="sr-only">Customer Reviews</h3>
 
-              {product.reviews.map((review, reviewIdx) => (
+              {reviews.featured.map((review, reviewIdx) => (
                 <div
                   key={review.id}
                   className="flex gap-x-4 text-sm text-gray-500"
                 >
                   <div className="flex-none py-10">
-                    {/* <img
+                    <img
                       src={review.avatarSrc}
                       alt=""
                       className="h-10 w-10 rounded-full bg-gray-100"
-                    /> */}
-                    <Avatar src={''} />
+                    />
                   </div>
                   <div
                     className={classNames(
@@ -636,14 +615,11 @@ export default function ProductDetails({ product }: ExtendedProducts) {
                     )}
                   >
                     <h3 className="font-medium text-gray-900">
-                      {review.user_id}
+                      {review.author}
                     </h3>
                     <p>
-                      <time
-                        className="text-xs"
-                        dateTime={formatTimeToNow(review.created_at)}
-                      >
-                        {formatTimeToNow(review.created_at)}
+                      <time className="text-xs" dateTime={review.datetime}>
+                        {review.date}
                       </time>
                     </p>
 
@@ -661,7 +637,7 @@ export default function ProductDetails({ product }: ExtendedProducts) {
                         />
                       ))} */}
                       <Rating
-                        value={review.rating}
+                        value={product.rating}
                         // value={productRating(product)}
                         readOnly
                         precision={0.5}
@@ -686,7 +662,7 @@ export default function ProductDetails({ product }: ExtendedProducts) {
 
                     <div
                       className="prose prose-sm mt-4 max-w-none text-gray-500"
-                      dangerouslySetInnerHTML={{ __html: review.comment }}
+                      dangerouslySetInnerHTML={{ __html: review.content }}
                     />
                   </div>
                 </div>
@@ -720,6 +696,7 @@ export default function ProductDetails({ product }: ExtendedProducts) {
             </Tab.Panel> */}
           </Tab.Panels>
         </Tab.Group>
+        L
       </div>
     </div>
   )

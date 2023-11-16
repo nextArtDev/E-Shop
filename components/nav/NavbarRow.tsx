@@ -13,7 +13,6 @@ import { useAppSelector } from '@/redux/store'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import UserMenu from './UserMenu'
-import { categories } from '@/lib/categories'
 
 interface LandingProps {}
 
@@ -170,7 +169,7 @@ function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function Navbar() {
+export default function NavbarRow() {
   const [open, setOpen] = useState(false)
 
   const { data: session, status, update } = useSession()
@@ -195,6 +194,7 @@ export default function Navbar() {
 
   return (
     <div className="bg-gray-700">
+      <UserMenu />
       {/* Mobile menu */}
       <Transition.Root show={open} as={Fragment}>
         <Dialog as="div" className="relative z-40 lg:hidden" onClose={setOpen}>
@@ -235,10 +235,10 @@ export default function Navbar() {
                 {/* Links */}
                 <Tab.Group as="div" className="mt-2">
                   <div className="border-b border-gray-200">
-                    <Tab.List className="-mb-px flex flex-col items-center justify-center text-center gap-x-8 space-y-4 ">
-                      {categories.map((category) => (
+                    <Tab.List className="-mb-px flex space-x-8 px-4">
+                      {navigation.categories.map((category) => (
                         <Tab
-                          key={category.label}
+                          key={category.name}
                           className={({ selected }) =>
                             classNames(
                               selected
@@ -248,19 +248,19 @@ export default function Navbar() {
                             )
                           }
                         >
-                          {category.label}
+                          {category.name}
                         </Tab>
                       ))}
                     </Tab.List>
                   </div>
-                  {/* <Tab.Panels as={Fragment}>
-                    { categories.map((category) => (
+                  <Tab.Panels as={Fragment}>
+                    {navigation.categories.map((category) => (
                       <Tab.Panel
                         key={category.name}
                         className="space-y-12 px-4 py-6"
                       >
                         <div className="grid grid-cols-2 gap-x-4 gap-y-10">
-                          {category.map((item) => (
+                          {category.featured.map((item) => (
                             <div key={item.name} className="group relative">
                               <div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-md bg-gray-100 group-hover:opacity-75">
                                 <Image
@@ -291,11 +291,11 @@ export default function Navbar() {
                         </div>
                       </Tab.Panel>
                     ))}
-                  </Tab.Panels> */}
+                  </Tab.Panels>
                 </Tab.Group>
 
                 <div className="space-y-6 border-t border-gray-200 px-4 py-6">
-                  {/* {navigation.pages.map((page) => (
+                  {navigation.pages.map((page) => (
                     <div key={page.name} className="flow-root">
                       <Link
                         href={page.href}
@@ -304,7 +304,7 @@ export default function Navbar() {
                         {page.name}
                       </Link>
                     </div>
-                  ))} */}
+                  ))}
                 </div>
 
                 <div className="space-y-6 border-t border-gray-200 px-4 py-6">
@@ -334,7 +334,7 @@ export default function Navbar() {
       <header className="relative">
         <nav aria-label="Top">
           {/* Top navigation */}
-          {/* <div className="bg-gray-900">
+          <div className="bg-gray-900">
             <div className="mx-auto flex h-10 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
               <div className="flex items-center gap-x-6">
                 <Link
@@ -351,7 +351,7 @@ export default function Navbar() {
                 </Link>
               </div>
             </div>
-          </div> */}
+          </div>
 
           {/* Secondary navigation */}
           <div className="bg-white">
@@ -373,9 +373,9 @@ export default function Navbar() {
                 <div className="hidden h-full lg:flex">
                   {/* Flyout menus */}
                   <Popover.Group className="inset-x-0 bottom-0 px-4">
-                    <div className="flex flex-col md:flex-row  h-full justify-center gap-x-8">
-                      {categories.map((category) => (
-                        <Popover key={category.label} className="flex">
+                    <div className="flex h-full justify-center gap-x-8">
+                      {navigation.categories.map((category) => (
+                        <Popover key={category.name} className="flex">
                           {({ open }) => (
                             <>
                               <div className="relative flex">
@@ -387,7 +387,7 @@ export default function Navbar() {
                                     'relative flex items-center justify-center text-sm font-medium transition-colors duration-200 ease-out'
                                   )}
                                 >
-                                  {category.label}
+                                  {category.name}
                                   <span
                                     className={classNames(
                                       open ? 'bg-indigo-600' : '',
@@ -429,7 +429,7 @@ export default function Navbar() {
                                   <div className="relative">
                                     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                                       <div className="grid grid-cols-4 gap-x-8 gap-y-10 py-16">
-                                        {/* {category.featured.map((item) => (
+                                        {category.featured.map((item) => (
                                           <div
                                             key={item.name}
                                             className="group relative truncate"
@@ -459,7 +459,7 @@ export default function Navbar() {
                                               Shop now
                                             </p>
                                           </div>
-                                        ))} */}
+                                        ))}
                                       </div>
                                     </div>
                                   </div>
@@ -470,7 +470,7 @@ export default function Navbar() {
                         </Popover>
                       ))}
 
-                      {/* {navigation.pages.map((page) => (
+                      {navigation.pages.map((page) => (
                         <Link
                           key={page.name}
                           href={page.href}
@@ -478,7 +478,7 @@ export default function Navbar() {
                         >
                           {page.name}
                         </Link>
-                      ))} */}
+                      ))}
                     </div>
                   </Popover.Group>
                 </div>
@@ -527,7 +527,7 @@ export default function Navbar() {
 
                   <div className="flex items-center lg:ml-8">
                     {/* Cart */}
-                    <div className="flex ml-4  lg:ml-8">
+                    <div className="ml-4 flow-root lg:ml-8">
                       <Link
                         href="/cart"
                         className="group -m-2 flex items-center p-2"
@@ -541,7 +541,6 @@ export default function Navbar() {
                         </span>
                         <span className="sr-only">items in cart, view bag</span>
                       </Link>
-                      <UserMenu />
                     </div>
                   </div>
                 </div>
