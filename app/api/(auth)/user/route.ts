@@ -1,8 +1,8 @@
 import { prisma } from '@/lib/prisma'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
-import * as bcrypt from 'bcrypt'
-// import bcrypt from 'bcryptjs-react'
+// import * as bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs-react'
 // Define Zod Schema for input validation
 
 const userSchema = z.object({
@@ -53,7 +53,7 @@ export async function POST(req: Request) {
     //     { status: 401 }
     //   )
     // }
-    const hashedPassword = await bcrypt.hash(password, 10)
+    const hashedPassword = await bcrypt.hashSync(password, 10)
     const newUser = await prisma.user.create({
       data: {
         phone,

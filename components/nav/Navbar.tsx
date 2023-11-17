@@ -10,10 +10,11 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Fragment, useEffect, useState } from 'react'
 import { useAppSelector } from '@/redux/store'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import UserMenu from './UserMenu'
 import { categories } from '@/lib/categories'
+import Category from '../Category'
 
 interface LandingProps {}
 
@@ -176,9 +177,6 @@ export default function Navbar() {
   const { data: session, status, update } = useSession()
   const user = session?.user
 
-  console.log(user?.name)
-  console.log(status)
-
   const [isMounted, setIsMounted] = useState(false)
   const cart = useAppSelector((state) => state.cardReducer)
 
@@ -188,6 +186,8 @@ export default function Navbar() {
   }, [])
 
   const router = useRouter()
+  const params = useSearchParams()
+  const categoryParam = params?.get('category')
 
   if (!isMounted) {
     return null
@@ -237,18 +237,17 @@ export default function Navbar() {
                   <div className="border-b border-gray-200">
                     <Tab.List className="-mb-px flex flex-col items-center justify-center text-center gap-x-8 space-y-4 ">
                       {categories.map((category) => (
-                        <Tab
-                          key={category.label}
-                          className={({ selected }) =>
-                            classNames(
-                              selected
-                                ? 'border-indigo-600 text-indigo-600'
-                                : 'border-transparent text-gray-900',
-                              'flex-1 whitespace-nowrap border-b-2 px-1 py-4 text-base font-medium'
-                            )
-                          }
-                        >
-                          {category.label}
+                        <Tab key={category.label}>
+                          <Category
+                            className="flex gap-x-3"
+                            label={category.label}
+                            icon={category.icon}
+                            selected={
+                              categoryParam === category.label ||
+                              (categoryParam === null &&
+                                category.label === 'همه')
+                            }
+                          />
                         </Tab>
                       ))}
                     </Tab.List>
@@ -387,7 +386,12 @@ export default function Navbar() {
                                     'relative flex items-center justify-center text-sm font-medium transition-colors duration-200 ease-out'
                                   )}
                                 >
-                                  {category.label}
+                                  <Category
+                                    label={category.label}
+                                    icon={category.icon}
+                                    selected={categoryParam === category.label}
+                                    className="flex flex-col justify-center items-center gap-y-2 pt-2"
+                                  />
                                   <span
                                     className={classNames(
                                       open ? 'bg-indigo-600' : '',

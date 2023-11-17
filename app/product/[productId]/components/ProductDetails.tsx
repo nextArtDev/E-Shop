@@ -24,6 +24,8 @@ import { Image as ImageType, Product, Review, User } from '@prisma/client'
 import { calculateAverageRating } from '@/components/products/ProductCardItem'
 import { formatTimeToNow } from '@/lib/date-utils'
 import Avatar from './Avatar'
+import AddRating from '@/components/AddRating'
+import { SafeUser } from '@/types/next-auth'
 
 const product = {
   name: 'Basic Tee',
@@ -149,12 +151,18 @@ interface ExtendedProducts {
   } & {
     reviews: Review[]
   }
+  currentUser?: SafeUser | null
+  beforeRated?: { rating: number } | null
 }
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function ProductDetails({ product }: ExtendedProducts) {
+export default function ProductDetails({
+  product,
+  currentUser,
+  beforeRated,
+}: ExtendedProducts) {
   // const [selectedColor, setSelectedColor] = useState(product.colors[0])
   // const [selectedSize, setSelectedSize] = useState(product.sizes[2])
 
@@ -567,7 +575,14 @@ export default function ProductDetails({ product }: ExtendedProducts) {
           </div>
         </div>
       </div>
-
+      {!beforeRated && (
+        <div className="py-12">
+          <h2 className="text-xl font-semibold">
+            نظر خود را راجع به {product.name} ثبت کنید
+          </h2>
+          <AddRating product={product} user={currentUser} />
+        </div>
+      )}
       <ListRating product={product} />
 
       <div className="mx-auto my-16 w-full max-w-2xl lg:col-span-4 lg:mt-0 lg:max-w-none">

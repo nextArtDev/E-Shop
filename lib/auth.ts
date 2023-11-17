@@ -3,8 +3,8 @@ import CredentialsProvider from 'next-auth/providers/credentials'
 
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import { prisma } from './prisma'
-import { compare } from 'bcrypt'
-// import { compare } from 'bcryptjs-react'
+// import { compare } from 'bcrypt'
+import { compare, compareSync } from 'bcryptjs-react'
 import { z } from 'zod'
 
 const FormSchema = z.object({
@@ -55,7 +55,7 @@ export const authOptions: NextAuthOptions = {
         if (!existingUser.isVerified) {
           return null
         }
-        const passwordMatch = await compare(password, existingUser.password)
+        const passwordMatch = await compareSync(password, existingUser.password)
         if (!passwordMatch) {
           return null
         }
