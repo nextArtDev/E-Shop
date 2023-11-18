@@ -15,6 +15,7 @@ import { useSession } from 'next-auth/react'
 import UserMenu from './UserMenu'
 import { categories } from '@/lib/categories'
 import Category from '../Category'
+import SearchBar from '../SearchBar'
 
 interface LandingProps {}
 
@@ -499,16 +500,19 @@ export default function Navbar() {
                   </button>
 
                   {/* Search */}
-                  <Link
+                  {/* <Link
                     href="#"
                     className="ml-2 p-2 text-gray-400 hover:text-gray-500"
-                  >
+                  > */}
+                  <article>
                     <span className="sr-only">Search</span>
-                    <MagnifyingGlassIcon
+                    {/* <MagnifyingGlassIcon
                       className="h-6 w-6"
                       aria-hidden="true"
-                    />
-                  </Link>
+                    /> */}
+                    <SearchBar />
+                  </article>
+                  {/* </Link> */}
                 </div>
 
                 {/* Logo (lg-) */}
