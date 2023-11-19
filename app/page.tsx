@@ -1,3 +1,5 @@
+export const revalidate = 0
+
 import { IProductParams } from '@/actions/getOrders'
 import { getProducts } from '@/actions/getProducts'
 import NullData from '@/components/NullData'
